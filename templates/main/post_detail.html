@@ -1,0 +1,345 @@
+<!-- templates/main/post_detail.html -->
+{% extends "main/layout.html" %}
+{% load static %}
+
+{% block title %}{{ post.title }} - Аренда квартир{% endblock %}
+
+{% block page_title %}{{ post.title }}{% endblock %}
+
+{% block page_subtitle %}
+    {{ post.rooms }}-комнатная квартира, {{ post.area }}м²
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Основная информация -->
+        <div class="col-md-8">
+            <!-- Карусель изображений -->
+            {% if post.images.all %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-0">
+                    <div id="postCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            {% for image in post.images.all %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <img src="{{ image.image.url }}" 
+                                     class="d-block w-100" 
+                                     alt="Изображение {{ post.title }}"
+                                     style="height: 400px; object-fit: cover;">
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        {% if post.images.count > 1 %}
+                        <button class="carousel-control-prev" type="button" data-bs-target="#postCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#postCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Миниатюры -->
+                    {% if post.images.count > 1 %}
+                    <div class="p-3">
+                        <div class="row g-2">
+                            {% for image in post.images.all %}
+                            <div class="col-3">
+                                <img src="{{ image.image.url }}" 
+                                     class="img-thumbnail {% if forloop.first %}active{% endif %}"
+                                     style="height: 80px; width: 100%; object-fit: cover; cursor: pointer;"
+                                     onclick="showImage({{ forloop.counter0 }})"
+                                     alt="Миниатюра">
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <!-- Заглушка если нет изображений -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-home fa-4x text-muted mb-3"></i>
+                    <h5 class="text-muted">Нет изображений</h5>
+                    <p class="text-muted">Для этого объявления еще не загружены фотографии</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Информация об объявлении -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="card-title text-primary">{{ post.title }}</h4>
+                    <p class="card-text">{{ post.description|linebreaks }}</p>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Характеристики:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-bed text-primary me-2"></i><strong>Комнат:</strong> {{ post.rooms }}</li>
+                                <li><i class="fas fa-arrows-alt text-primary me-2"></i><strong>Площадь:</strong> {{ post.area }} м²</li>
+                                <li><i class="fas fa-map-marker-alt text-primary me-2"></i><strong>Адрес:</strong> {{ post.address }}</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Контактная информация:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-phone text-primary me-2"></i><strong>Телефон:</strong> {{ post.contact_phone }}</li>
+                                <li><i class="fas fa-ruble-sign text-primary me-2"></i><strong>Цена:</strong> <span class="text-success h5">{{ post.price }} ₽/мес</span></li>
+                                {% if post.category %}
+                                <li><i class="fas fa-tag text-primary me-2"></i><strong>Категория:</strong> {{ post.category.name }}</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 pt-3 border-top">
+                        <small class="text-muted">
+                            <i class="fas fa-eye me-1"></i>Просмотров: {{ post.views }} | 
+                            <i class="fas fa-calendar me-1"></i>Опубликовано: {{ post.created|date:"d.m.Y" }} |
+                            {% if post.updated != post.created %}
+                            <i class="fas fa-edit me-1"></i>Обновлено: {{ post.updated|date:"d.m.Y" }}
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Комментарии -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-comments me-2"></i>
+                        Комментарии ({{ comments.count }})
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if user.is_authenticated %}
+                    <form method="post" class="mb-4">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_content" class="form-label">Ваш комментарий:</label>
+                            <textarea name="content" id="id_content" class="form-control" rows="3" 
+                                      placeholder="Оставьте ваш комментарий..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-2"></i>Добавить комментарий
+                        </button>
+                    </form>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <a href="{% url 'auth' %}" class="alert-link">Войдите</a>, чтобы оставить комментарий
+                    </div>
+                    {% endif %}
+
+                    <div class="comments-list">
+                        {% for comment in comments %}
+                        <div class="comment-item border-bottom pb-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-user-circle text-muted me-2"></i>
+                                    <strong>{{ comment.owner.username }}</strong>
+                                    {% if comment.owner == post.owner %}
+                                    <span class="badge bg-primary ms-2">Владелец</span>
+                                    {% endif %}
+                                </div>
+                                <small class="text-muted">{{ comment.created|date:"d.m.Y H:i" }}</small>
+                            </div>
+                            <p class="mb-2">{{ comment.content }}</p>
+                            
+                            {% if user == comment.owner or user.is_staff %}
+                            <div class="mt-2">
+                                <a href="{% url 'comment-delete' comment.id %}" class="btn btn-sm btn-outline-danger" 
+                                   onclick="return confirm('Удалить этот комментарий?')">
+                                    <i class="fas fa-trash me-1"></i>Удалить
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-comment-slash fa-2x text-muted mb-3"></i>
+                            <p class="text-muted">Пока нет комментариев. Будьте первым!</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Боковая панель -->
+        <div class="col-md-4">
+            <!-- Информация о владельце объявления -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="fas fa-user me-2"></i>
+                        Владелец объявления
+                    </h6>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        {% if post.owner.profile.avatar %}
+                            <img src="{{ post.owner.profile.avatar.url }}" 
+                                 alt="Аватар {{ post.owner.username }}"
+                                 class="rounded-circle" 
+                                 style="width: 80px; height: 80px; object-fit: cover;">
+                        {% else %}
+                            <i class="fas fa-user-circle fa-3x text-muted"></i>
+                        {% endif %}
+                    </div>
+                    <h6>{{ post.owner.username }}</h6>
+                    <small class="text-muted">
+                        <i class="fas fa-calendar me-1"></i>
+                        На сайте с {{ post.owner.date_joined|date:"d.m.Y" }}
+                    </small>
+                    
+                    {% if post.owner.profile.phone %}
+                    <div class="mt-2">
+                        <small>
+                            <i class="fas fa-phone me-1"></i>
+                            {{ post.owner.profile.phone }}
+                        </small>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Статистика владельца -->
+                    <div class="mt-3 pt-3 border-top">
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <small class="text-muted">Объявления</small>
+                                <div class="fw-bold text-primary">{{ post.owner.posts.count }}</div>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Комментарии</small>
+                                <div class="fw-bold text-primary">{{ post.owner.comments.count }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Действия -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="fas fa-cog me-2"></i>
+                        Действия
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% if user == post.owner or user.is_staff %}
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'post-update' post.id %}" class="btn btn-warning">
+                            <i class="fas fa-edit me-2"></i>Редактировать
+                        </a>
+                        <a href="{% url 'post-delete' post.id %}" class="btn btn-outline-danger"
+                           onclick="return confirm('Вы уверены, что хотите удалить это объявление?')">
+                            <i class="fas fa-trash me-2"></i>Удалить
+                        </a>
+                        {% if user.is_staff %}
+                        <a href="{% url 'admin:apartament_post_change' post.id %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-cog me-2"></i>Админ-панель
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="d-grid gap-2">
+                        <a href="tel:{{ post.contact_phone }}" class="btn btn-success">
+                            <i class="fas fa-phone me-2"></i>Позвонить
+                        </a>
+                        <button class="btn btn-outline-primary" onclick="alert('Функция сохранения в избранное скоро будет доступна!')">
+                            <i class="fas fa-heart me-2"></i>В избранное
+                        </button>
+                        <button class="btn btn-outline-info" onclick="alert('Функция жалобы скоро будет доступна!')">
+                            <i class="fas fa-flag me-2"></i>Пожаловаться
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Статус объявления -->
+            {% if user.is_staff or user == post.owner %}
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Статус объявления
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <span class="badge 
+                        {% if post.status == 'active' %}bg-success
+                        {% elif post.status == 'moderation' %}bg-warning
+                        {% elif post.status == 'draft' %}bg-secondary
+                        {% elif post.status == 'rejected' %}bg-danger
+                        {% else %}bg-info{% endif %}">
+                        {{ post.get_status_display }}
+                    </span>
+                    {% if post.status == 'rejected' %}
+                    <p class="mt-2 small text-muted">Обратитесь к администратору для выяснения причин</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.comment-item {
+    transition: background-color 0.2s ease;
+}
+
+.comment-item:hover {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 10px;
+    margin: -10px -10px 10px -10px;
+}
+
+.carousel-item img {
+    border-radius: 8px;
+}
+
+.img-thumbnail {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.img-thumbnail:hover,
+.img-thumbnail.active {
+    border-color: #007bff;
+    transform: scale(1.05);
+}
+</style>
+
+<script>
+function showImage(index) {
+    const carousel = new bootstrap.Carousel(document.getElementById('postCarousel'));
+    carousel.to(index);
+}
+
+// Автоматическая подсветка активной миниатюры
+document.addEventListener('DOMContentLoaded', function() {
+    const carousel = document.getElementById('postCarousel');
+    if (carousel) {
+        carousel.addEventListener('slide.bs.carousel', function (event) {
+            const thumbnails = document.querySelectorAll('.img-thumbnail');
+            thumbnails.forEach(thumb => thumb.classList.remove('active'));
+            if (thumbnails[event.to]) {
+                thumbnails[event.to].classList.add('active');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

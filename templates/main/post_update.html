@@ -1,0 +1,578 @@
+{% extends "main/layout.html" %}
+
+{% block title %}
+Редактирование объявления - Аренда квартир
+{% endblock %}
+
+{% block page_title %}
+Редактирование объявления
+{% endblock %}
+
+{% block page_subtitle %}
+Внесите изменения в информацию об аренде квартиры
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            {% if update %}
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-warning text-dark text-center py-4">
+                    <h3 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>
+                        Редактирование объявления
+                    </h3>
+                    <p class="mb-0 mt-2 opacity-75">ID: #{{ object.id }} | Создано: {{ object.created|date:"d.m.Y" }}</p>
+                </div>
+                
+                <div class="card-body p-4">
+                    {% if messages %}
+                    <div class="messages mb-4">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-triangle{% endif %} me-2"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Ошибка!</strong> Пожалуйста, исправьте ошибки в форме.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endif %}
+
+                    <form method="post" class="needs-validation" novalidate enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Основная информация -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Основная информация
+                                </h5>
+                            </div>
+                            
+                            <!-- Заголовок -->
+                            <div class="col-md-8 mb-3">
+                                <label for="id_title" class="form-label fw-semibold">
+                                    <i class="fas fa-heading me-2 text-primary"></i>Заголовок объявления *
+                                </label>
+                                <input type="text" 
+                                       name="title" 
+                                       id="id_title" 
+                                       class="form-control {% if form.title.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.title.value|default:'' }}" 
+                                       maxlength="200" 
+                                       required
+                                       placeholder="Например: Сдам 2-комнатную квартиру в центре">
+                                {% if form.title.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.title.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                <div class="form-text">Придумайте понятный и привлекательный заголовок</div>
+                            </div>
+
+                            <!-- Категория -->
+                            <div class="col-md-4 mb-3">
+                                <label for="id_category" class="form-label fw-semibold">
+                                    <i class="fas fa-tag me-2 text-primary"></i>Категория *
+                                </label>
+                                <select name="category" 
+                                        id="id_category" 
+                                        class="form-select {% if form.category.errors %}is-invalid{% endif %}" 
+                                        required>
+                                    <option value="">Выберите категорию</option>
+                                    {% for category in form.category.field.queryset %}
+                                    <option value="{{ category.id }}" 
+                                            {% if form.category.value == category.id %}selected{% endif %}>
+                                        {{ category.name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                {% if form.category.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.category.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Описание -->
+                        <div class="mb-4">
+                            <label for="id_description" class="form-label fw-semibold">
+                                <i class="fas fa-align-left me-2 text-primary"></i>Описание квартиры *
+                            </label>
+                            <textarea name="description" 
+                                      id="id_description" 
+                                      class="form-control {% if form.description.errors %}is-invalid{% endif %}" 
+                                      rows="5" 
+                                      required
+                                      placeholder="Опишите квартиру, район, инфраструктуру, преимущества...">{{ form.description.value|default:'' }}</textarea>
+                            {% if form.description.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.description.errors %}
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <div class="form-text">Опишите все преимущества вашей квартиры для привлечения арендаторов</div>
+                                <div class="form-text">
+                                    <span id="charCount">0</span>/<span id="charMax">2000</span> символов
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Детали аренды -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-home me-2"></i>
+                                    Детали аренды
+                                </h5>
+                            </div>
+                            
+                            <!-- Цена -->
+                            <div class="col-md-4 mb-3">
+                                <label for="id_price" class="form-label fw-semibold">
+                                    <i class="fas fa-ruble-sign me-2 text-primary"></i>Цена в месяц *
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">₽</span>
+                                    <input type="number" 
+                                           name="price" 
+                                           id="id_price" 
+                                           class="form-control {% if form.price.errors %}is-invalid{% endif %}" 
+                                           value="{{ form.price.value|default:'0' }}" 
+                                           min="0" 
+                                           step="1000" 
+                                           required>
+                                    <span class="input-group-text bg-light">/месяц</span>
+                                </div>
+                                {% if form.price.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.price.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Площадь -->
+                            <div class="col-md-4 mb-3">
+                                <label for="id_area" class="form-label fw-semibold">
+                                    <i class="fas fa-expand-arrows-alt me-2 text-primary"></i>Площадь (м²) *
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" 
+                                           name="area" 
+                                           id="id_area" 
+                                           class="form-control {% if form.area.errors %}is-invalid{% endif %}" 
+                                           value="{{ form.area.value|default:'0' }}" 
+                                           min="0" 
+                                           step="0.1" 
+                                           required>
+                                    <span class="input-group-text bg-light">м²</span>
+                                </div>
+                                {% if form.area.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.area.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Количество комнат -->
+                            <div class="col-md-4 mb-3">
+                                <label for="id_rooms" class="form-label fw-semibold">
+                                    <i class="fas fa-bed me-2 text-primary"></i>Комнат *
+                                </label>
+                                <select name="rooms" 
+                                        id="id_rooms" 
+                                        class="form-select {% if form.rooms.errors %}is-invalid{% endif %}" 
+                                        required>
+                                    <option value="">Выберите</option>
+                                    {% for i in "123456789" %}
+                                    <option value="{{ i }}" 
+                                            {% if form.rooms.value == i %}selected{% endif %}>
+                                        {{ i }} {% if i == '1' %}комната{% else %}комнаты{% endif %}
+                                    </option>
+                                    {% endfor %}
+                                    <option value="10" {% if form.rooms.value == '10' %}selected{% endif %}>10+ комнат</option>
+                                </select>
+                                {% if form.rooms.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.rooms.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Контактная информация -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-phone me-2"></i>
+                                    Контактная информация
+                                </h5>
+                            </div>
+                            
+                            <!-- Адрес -->
+                            <div class="col-md-6 mb-3">
+                                <label for="id_address" class="form-label fw-semibold">
+                                    <i class="fas fa-map-marker-alt me-2 text-primary"></i>Адрес *
+                                </label>
+                                <input type="text" 
+                                       name="address" 
+                                       id="id_address" 
+                                       class="form-control {% if form.address.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.address.value|default:'' }}" 
+                                       maxlength="300" 
+                                       required
+                                       placeholder="Город, улица, дом, квартира">
+                                {% if form.address.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.address.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Телефон -->
+                            <div class="col-md-6 mb-3">
+                                <label for="id_contact_phone" class="form-label fw-semibold">
+                                    <i class="fas fa-mobile-alt me-2 text-primary"></i>Контактный телефон *
+                                </label>
+                                <input type="tel" 
+                                       name="contact_phone" 
+                                       id="id_contact_phone" 
+                                       class="form-control {% if form.contact_phone.errors %}is-invalid{% endif %}" 
+                                       value="{{ form.contact_phone.value|default:'' }}" 
+                                       maxlength="20" 
+                                       required
+                                       placeholder="+7 (999) 999-99-99">
+                                {% if form.contact_phone.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.contact_phone.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card mb-4">
+            <div class="card-header">Текущие изображения</div>
+            <div class="card-body">
+                {% if existing_images %}
+                <div class="row">
+                    {% for img in existing_images %}
+                    <div class="col-md-3 mb-3">
+                        <div class="card">
+                            <img src="{{ img.image.url }}" class="card-img-top" 
+                                 alt="Изображение" style="height: 150px; object-fit: cover;">
+                            <div class="card-body text-center">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" 
+                                           name="main_image" value="{{ img.id }}"
+                                           {% if img.is_main %}checked{% endif %}>
+                                    <label class="form-check-label small">
+                                        Основное
+                                    </label>
+                                </div>
+                                <a href="{% url 'delete-image' img.id %}" 
+                                   class="btn btn-sm btn-danger mt-2"
+                                   onclick="return confirm('Удалить изображение?')">
+                                    Удалить
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">Нет загруженных изображений</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Новые изображения -->
+        <div class="card mb-4">
+            <div class="card-header">Добавить изображения</div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="{{ image_form.images.id_for_label }}" class="form-label">
+                        {{ image_form.images.label }}
+                    </label>
+                    <input type="file" name="images" multiple class="form-control" 
+                           accept="image/*" id="{{ image_form.images.id_for_label }}">
+                    <div class="form-text">{{ image_form.images.help_text }}</div>
+                </div>
+            </div>
+        </div>
+                        <!-- Дополнительные опции -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-cogs me-2"></i>
+                                    Дополнительные настройки
+                                </h5>
+                            </div>
+                            
+                            {% if user.is_staff %}
+<div class="mb-3">
+    <label for="id_status" class="form-label">
+        <i class="fas fa-toggle-on me-2 text-success"></i>Статус объявления
+    </label>
+    <select name="status" id="id_status" class="form-select">
+        <option value="draft" {% if form.status.value == 'draft' %}selected{% endif %}>Черновик</option>
+        <option value="moderation" {% if form.status.value == 'moderation' %}selected{% endif %}>На модерации</option>
+        <option value="active" {% if form.status.value == 'active' %}selected{% endif %}>Активно</option>
+        <option value="rejected" {% if form.status.value == 'rejected' %}selected{% endif %}>Отклонено</option>
+        <option value="archived" {% if form.status.value == 'archived' %}selected{% endif %}>Архив</option>
+    </select>
+</div>
+{% else %}
+<!-- Для обычных пользователей показываем текущий статус -->
+{% if object %}
+<div class="alert alert-info">
+    <strong>Статус:</strong> 
+    {% if object.status == 'draft' %}Черновик{% endif %}
+    {% if object.status == 'moderation' %}На модерации{% endif %}
+    {% if object.status == 'active' %}Активно{% endif %}
+    {% if object.status == 'rejected' %}Отклонено{% endif %}
+    {% if object.status == 'archived' %}Архив{% endif %}
+</div>
+{% endif %}
+{% endif %}
+
+                        <!-- Действия -->
+                        <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top">
+                            <div>
+                                <a href="{% url 'post-detail' object.id %}" class="btn btn-outline-secondary me-2">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    Назад к объявлению
+                                </a>
+                                <a href="{% url 'change' %}" class="btn btn-outline-primary">
+                                    <i class="fas fa-list me-2"></i>
+                                    К списку объявлений
+                                </a>
+                            </div>
+                            
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-warning btn-lg px-4">
+                                    <i class="fas fa-save me-2"></i>
+                                    Сохранить изменения
+                                </button>
+                                <a href="{% url 'post-delete' object.id %}" class="btn btn-danger btn-lg px-4" 
+                                   onclick="return confirmDelete()">
+                                    <i class="fas fa-trash me-2"></i>
+                                    Удалить
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-danger text-center py-4">
+                <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                <h4>Объявление не найдено</h4>
+                <p class="mb-0">Вы не можете редактировать это объявление или оно не существует.</p>
+                <a href="{% url 'post-list' %}" class="btn btn-primary mt-3">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Вернуться к списку объявлений
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 15px;
+    margin-top: 1rem;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%) !important;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #ffc107;
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    border: none;
+    color: #212529;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+    color: #212529;
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+}
+
+.border-top {
+    border-top-color: rgba(0,0,0,0.1) !important;
+}
+
+.form-label {
+    font-weight: 600;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+}
+</style>
+
+<script>
+// Валидация формы
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    // Прокрутка к первой ошибке
+                    const firstError = form.querySelector('.is-invalid');
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+// Маска для телефона
+document.getElementById('id_contact_phone')?.addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    
+    if (value.startsWith('7') || value.startsWith('8')) {
+        value = value.substring(1);
+    }
+    
+    let formattedValue = '+7';
+    if (value.length > 0) {
+        formattedValue += ' (' + value.substring(0, 3);
+    }
+    if (value.length > 3) {
+        formattedValue += ') ' + value.substring(3, 6);
+    }
+    if (value.length > 6) {
+        formattedValue += '-' + value.substring(6, 8);
+    }
+    if (value.length > 8) {
+        formattedValue += '-' + value.substring(8, 10);
+    }
+    
+    e.target.value = formattedValue;
+});
+
+// Подсчет символов для описания
+const descriptionField = document.getElementById('id_description');
+const charCount = document.getElementById('charCount');
+const charMax = document.getElementById('charMax');
+const MAX_CHARS = 2000;
+
+if (descriptionField && charCount) {
+    // Установить максимальное значение
+    if (charMax) {
+        charMax.textContent = MAX_CHARS;
+    }
+    
+    // Инициализация счетчика
+    updateCharCount();
+    
+    descriptionField.addEventListener('input', updateCharCount);
+    
+    function updateCharCount() {
+        const length = descriptionField.value.length;
+        charCount.textContent = length;
+        
+        if (length < 50) {
+            charCount.className = 'text-danger fw-bold';
+        } else if (length < 100) {
+            charCount.className = 'text-warning fw-bold';
+        } else if (length < MAX_CHARS * 0.9) {
+            charCount.className = 'text-success fw-bold';
+        } else if (length < MAX_CHARS) {
+            charCount.className = 'text-warning fw-bold';
+        } else {
+            charCount.className = 'text-danger fw-bold';
+        }
+        
+        // Ограничение ввода
+        if (length > MAX_CHARS) {
+            descriptionField.value = descriptionField.value.substring(0, MAX_CHARS);
+            charCount.textContent = MAX_CHARS;
+        }
+    }
+}
+
+// Подтверждение удаления
+function confirmDelete() {
+    const confirmation = confirm('Вы уверены, что хотите удалить это объявление? Это действие нельзя отменить.');
+    if (!confirmation) {
+        return false;
+    }
+    
+    // Дополнительное предупреждение
+    const doubleCheck = confirm('ВНИМАНИЕ! Все данные об этом объявлении будут безвозвратно удалены. Продолжить?');
+    return doubleCheck;
+}
+
+// Автосохранение черновика (опционально)
+let autoSaveTimer;
+descriptionField?.addEventListener('input', function() {
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = setTimeout(function() {
+        // Здесь можно добавить логику автосохранения
+        console.log('Автосохранение...');
+    }, 3000);
+});
+
+// Валидация цены
+document.getElementById('id_price')?.addEventListener('blur', function(e) {
+    const value = parseInt(e.target.value);
+    if (value < 1000) {
+        alert('Цена аренды слишком низкая. Рекомендуется устанавливать цену от 1000 рублей.');
+    } else if (value > 1000000) {
+        alert('Проверьте правильность указанной цены. Возможно, вы ошиблись.');
+    }
+});
+</script>
+{% endblock %}

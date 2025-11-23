@@ -1,0 +1,362 @@
+{% extends "main/layout.html" %}
+
+{% block title %}
+Профиль пользователя - Аренда квартир
+{% endblock %}
+
+{% block page_title %}
+Мой профиль
+{% endblock %}
+
+{% block page_subtitle %}
+Управление вашей учетной записью и настройками
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Боковая панель профиля -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body text-center">
+                    <!-- Аватар как в Telegram -->
+                    <div class="mb-4">
+                        <div class="avatar-container position-relative mx-auto" style="width: 150px; height: 150px;">
+                            {% if user.profile.avatar %}
+                                <img src="{{ user.profile.avatar.url }}" 
+                                     alt="Аватар" 
+                                     class="avatar-image rounded-circle w-100 h-100"
+                                     style="object-fit: cover;">
+                            {% else %}
+                                <div class="avatar-placeholder bg-gradient-primary rounded-circle w-100 h-100 d-flex align-items-center justify-content-center">
+                                    <i class="fas fa-user fa-3x text-white"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Индикатор редактирования -->
+                            <div class="avatar-overlay position-absolute top-0 start-0 w-100 h-100 rounded-circle d-flex align-items-center justify-content-center opacity-0">
+                                <div class="bg-dark bg-opacity-50 rounded-circle p-2">
+                                    <i class="fas fa-camera text-white fa-lg"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Основная информация -->
+                    <h4 class="card-title mb-1">
+                        {% if user.first_name and user.last_name %}
+                            {{ user.first_name }} {{ user.last_name }}
+                        {% else %}
+                            {{ user.username }}
+                        {% endif %}
+                    </h4>
+                    <p class="text-muted mb-3">@{{ user.username }}</p>
+                    
+                    <!-- Статистика -->
+                    <div class="row text-center mb-4">
+                        <div class="col-4">
+                            <div class="stat-item">
+                                <div class="stat-number text-primary fw-bold">{{ user.posts.count }}</div>
+                                <div class="stat-label text-muted small">Объявления</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-item">
+                                <div class="stat-number text-primary fw-bold">{{ user.comments.count }}</div>
+                                <div class="stat-label text-muted small">Комментарии</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-item">
+                                <div class="stat-number text-primary fw-bold">{{ total_views|default:0 }}</div>
+                                <div class="stat-label text-muted small">Просмотры</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Действия -->
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'profile-edit' %}" class="btn btn-primary">
+                            <i class="fas fa-edit me-2"></i>Редактировать профиль
+                        </a>
+                        <a href="{% url 'change' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-list me-2"></i>Мои объявления
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Контактная информация -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="fas fa-address-card me-2"></i>
+                        Контакты
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="contact-info">
+                        {% if user.profile.phone %}
+                        <div class="contact-item d-flex align-items-center mb-2">
+                            <i class="fas fa-phone text-primary me-3"></i>
+                            <span>{{ user.profile.phone }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if user.email %}
+                        <div class="contact-item d-flex align-items-center mb-2">
+                            <i class="fas fa-envelope text-primary me-3"></i>
+                            <span>{{ user.email }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="contact-item d-flex align-items-center">
+                            <i class="fas fa-calendar text-primary me-3"></i>
+                            <span>На сайте с {{ user.date_joined|date:"d.m.Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Основное содержимое -->
+        <div class="col-lg-8">
+            <!-- Информация о пользователе -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Основная информация
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <label class="text-muted small mb-1">Имя пользователя</label>
+                                <div class="fw-semibold">{{ user.username }}</div>
+                            </div>
+                            <div class="info-item mb-3">
+                                <label class="text-muted small mb-1">Email</label>
+                                <div class="fw-semibold">{{ user.email|default:"Не указан" }}</div>
+                            </div>
+                            <div class="info-item mb-3">
+                                <label class="text-muted small mb-1">Имя</label>
+                                <div class="fw-semibold">{{ user.first_name|default:"Не указано" }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <label class="text-muted small mb-1">Фамилия</label>
+                                <div class="fw-semibold">{{ user.last_name|default:"Не указана" }}</div>
+                            </div>
+                            <div class="info-item mb-3">
+                                <label class="text-muted small mb-1">Телефон</label>
+                                <div class="fw-semibold">{{ user.profile.phone|default:"Не указан" }}</div>
+                            </div>
+                            <div class="info-item mb-3">
+                                <label class="text-muted small mb-1">Дата рождения</label>
+                                <div class="fw-semibold">{{ user.profile.birth_date|date:"d.m.Y"|default:"Не указана" }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if user.profile.bio %}
+                    <div class="mt-4 pt-3 border-top">
+                        <label class="text-muted small mb-2">О себе</label>
+                        <div class="bio-content p-3 bg-light rounded">
+                            {{ user.profile.bio|linebreaks }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Статистика активности -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        Статистика активности
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3">
+                            <div class="stat-card-lg">
+                                <div class="stat-icon-lg bg-primary">
+                                    <i class="fas fa-home"></i>
+                                </div>
+                                <div class="stat-info-lg">
+                                    <h3 class="text-primary">{{ user.posts.count }}</h3>
+                                    <p class="text-muted">Объявлений</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="stat-card-lg">
+                                <div class="stat-icon-lg bg-success">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                                <div class="stat-info-lg">
+                                    <h3 class="text-success">{{ user.comments.count }}</h3>
+                                    <p class="text-muted">Комментариев</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="stat-card-lg">
+                                <div class="stat-icon-lg bg-warning">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                                <div class="stat-info-lg">
+                                    <h3 class="text-warning">{{ total_views|default:0 }}</h3>
+                                    <p class="text-muted">Просмотров</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="stat-card-lg">
+                                <div class="stat-icon-lg bg-info">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="stat-info-lg">
+                                    <h3 class="text-info">{{ user_rating|default:"4.8" }}</h3>
+                                    <p class="text-muted">Рейтинг</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Последние объявления -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list me-2"></i>
+                            Последние объявления
+                        </h5>
+                        <span class="badge bg-white text-info">{{ user.posts.count }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if user.posts.all %}
+                        <div class="list-group list-group-flush">
+                            {% for post in user.posts.all|slice:":5" %}
+                            <div class="list-group-item px-0">
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="post-thumbnail bg-primary rounded d-flex align-items-center justify-content-center" 
+                                             style="width: 60px; height: 60px;">
+                                            <i class="fas fa-home text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <h6 class="mb-0">
+                                                <a href="{% url 'post-detail' post.id %}" class="text-decoration-none text-dark">
+                                                    {{ post.title }}
+                                                </a>
+                                            </h6>
+                                            <span class="badge bg-primary">
+                                                {% if post.price > 0 %}
+                                                    {{ post.price|floatformat:"0" }} ₽
+                                                {% else %}
+                                                    Договорная
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                        <p class="text-muted small mb-2">{{ post.description|truncatewords:15 }}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar me-1"></i>{{ post.created|date:"d.m.Y" }}
+                                            </small>
+                                            <small class="text-muted">
+                                                <i class="fas fa-eye me-1"></i>{{ post.views }} просмотров
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        {% if user.posts.count > 5 %}
+                        <div class="text-center mt-3">
+                            <a href="{% url 'change' %}" class="btn btn-outline-primary">
+                                Показать все объявления ({{ user.posts.count }})
+                            </a>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <div class="empty-state mb-3">
+                                <i class="fas fa-home fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">У вас пока нет объявлений</h5>
+                                <p class="text-muted">Создайте первое объявление и начните получать отклики</p>
+                            </div>
+                            <a href="{% url 'post-create' %}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Создать первое объявление
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSS и JavaScript остаются без изменений -->
+<style>
+/* Ваши существующие стили */
+.avatar-container { transition: all 0.3s ease; cursor: pointer; }
+.avatar-container:hover .avatar-overlay { opacity: 1; }
+.avatar-image { transition: all 0.3s ease; }
+.avatar-container:hover .avatar-image { filter: brightness(0.8); }
+.avatar-placeholder { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.avatar-overlay { transition: opacity 0.3s ease; background: rgba(0, 0, 0, 0.3); }
+.stat-item { padding: 0.5rem; }
+.stat-number { font-size: 1.25rem; line-height: 1; }
+.stat-label { font-size: 0.75rem; margin-top: 0.25rem; }
+.stat-card-lg { background: white; border-radius: 15px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); display: flex; align-items: center; transition: transform 0.3s ease; border: 1px solid #e9ecef; }
+.stat-card-lg:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); }
+.stat-icon-lg { width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 1rem; color: white; font-size: 1.5rem; }
+.stat-info-lg h3 { font-size: 1.8rem; margin-bottom: 0.2rem; font-weight: bold; }
+.stat-info-lg p { color: #6c757d; margin-bottom: 0; font-size: 0.9rem; }
+.info-item { border-bottom: 1px solid #f8f9fa; padding-bottom: 1rem; }
+.info-item:last-child { border-bottom: none; padding-bottom: 0; }
+.contact-item { padding: 0.5rem 0; }
+.contact-item:not(:last-child) { border-bottom: 1px solid #f8f9fa; }
+.post-thumbnail { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.list-group-item { border: none; border-bottom: 1px solid rgba(0,0,0,.125); transition: background-color 0.2s ease; padding: 1rem 0; }
+.list-group-item:last-child { border-bottom: none; }
+.list-group-item:hover { background-color: #f8f9fa; }
+.empty-state { opacity: 0.7; }
+@media (max-width: 768px) { .avatar-container { width: 120px !important; height: 120px !important; } .stat-card-lg { flex-direction: column; text-align: center; padding: 1rem; } .stat-icon-lg { margin-right: 0; margin-bottom: 0.5rem; } }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Анимация появления элементов
+    const elements = document.querySelectorAll('.stat-card-lg, .list-group-item');
+    elements.forEach((element, index) => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            element.style.transition = 'all 0.5s ease';
+            element.style.opacity = '1';
+            element.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+    
+    // Клик по аватару для редактирования
+    const avatarContainer = document.querySelector('.avatar-container');
+    avatarContainer?.addEventListener('click', function() {
+        window.location.href = "{% url 'profile-edit' %}";
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,171 @@
+{% extends "main/layout.html" %}
+
+{% block title %}
+Редактирование профиля - Аренда квартир
+{% endblock %}
+
+{% block page_title %}
+Редактирование профиля
+{% endblock %}
+
+{% block page_subtitle %}
+Обновите информацию о себе
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-edit me-2"></i>
+                        Редактирование профиля
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <!-- Аватар -->
+                            <div class="col-md-4 text-center mb-4">
+                                <div class="mb-3">
+                                    {% if form.instance.avatar %}
+                                        <img src="{{ form.instance.avatar.url }}" alt="Текущий аватар" class="rounded-circle mb-3" width="150" height="150">
+                                    {% else %}
+                                        <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 150px; height: 150px;">
+                                            <i class="fas fa-user fa-3x text-white"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                {{ form.avatar }}
+                                <div class="form-text">
+                                    Рекомендуемый размер: 150x150 px
+                                </div>
+                            </div>
+
+                            <!-- Основная информация -->
+                            <div class="col-md-8">
+                                <h6 class="text-primary mb-3">Основная информация</h6>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Имя пользователя *</label>
+                                        {{ user_form.username }}
+                                        {% if user_form.username.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ user_form.username.errors.0 }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Email</label>
+                                        {{ user_form.email }}
+                                        {% if user_form.email.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ user_form.email.errors.0 }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Имя</label>
+                                        {{ user_form.first_name }}
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Фамилия</label>
+                                        {{ user_form.last_name }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Дополнительная информация -->
+                        <h6 class="text-primary mb-3">Дополнительная информация</h6>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Телефон</label>
+                                {{ form.phone }}
+                                {% if form.phone.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.phone.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Дата рождения</label>
+                                {{ form.birth_date }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">О себе</label>
+                            {{ form.bio }}
+                            <div class="form-text">
+                                Расскажите немного о себе (максимум 500 символов)
+                            </div>
+                        </div>
+
+                        <!-- Кнопки -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'profile' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Назад к профилю
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save me-2"></i>Сохранить изменения
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-control:focus {
+    border-color: #ffc107;
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    border: none;
+    color: #212529;
+    font-weight: 500;
+}
+
+.invalid-feedback {
+    display: block;
+}
+
+.was-validated .form-control:invalid ~ .invalid-feedback {
+    display: block;
+}
+</style>
+
+<script>
+// Валидация формы
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+</script>
+{% endblock %}

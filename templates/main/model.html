@@ -1,0 +1,686 @@
+{% extends "main/layout.html" %}
+
+{% block title %}
+Создание объявления - Аренда квартир
+{% endblock %}
+
+{% block page_title %}
+Создание нового объявления
+{% endblock %}
+
+{% block page_subtitle %}
+Заполните информацию о квартире для аренды
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <!-- Хлебные крошки -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'post-list' %}" class="text-decoration-none">Главная</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'change' %}" class="text-decoration-none">Мои объявления</a></li>
+                    <li class="breadcrumb-item active">Создание объявления</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="col-xl-10">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-gradient-primary text-white py-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-1">
+                                <i class="fas fa-plus-circle me-2"></i>
+                                Новое объявление
+                            </h3>
+                            <p class="mb-0 opacity-75">Заполните все поля для публикации объявления</p>
+                        </div>
+                        <div class="badge bg-white text-primary fs-6 p-3">
+                            <i class="fas fa-home me-1"></i>
+                            Аренда квартиры
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body p-4">
+                    <!-- Прогресс-бар -->
+                    <div class="mb-5">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted fw-semibold">Прогресс заполнения:</span>
+                            <span class="text-primary fw-bold" id="progressText">0%</span>
+                        </div>
+                        <div class="progress" style="height: 10px; border-radius: 5px;">
+                            <div id="formProgress" class="progress-bar bg-gradient-primary" 
+                                 role="progressbar" style="width: 0%; border-radius: 5px;"></div>
+                        </div>
+                    </div>
+                    {% if form.errors %}
+    <div class="alert alert-danger">
+        <strong>Ошибки в форме:</strong>
+        <ul>
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                    <li>{{ field }}: {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+                    {% if messages %}
+                    <div class="messages mb-4">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-triangle{% endif %} me-2"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Ошибка заполнения формы!</strong> Пожалуйста, проверьте введенные данные.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endif %}
+
+                    <form method="post" class="needs-validation" novalidate id="postForm">
+                        {% csrf_token %}
+                        
+                        <!-- Шаг 1: Основная информация -->
+                        <div class="form-section mb-5">
+                            <div class="section-header mb-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="section-number bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                         style="width: 40px; height: 40px;">1</div>
+                                    <h4 class="mb-0 text-primary">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Основная информация
+                                    </h4>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-8 mb-4">
+                                    <label for="id_title" class="form-label fw-semibold">
+                                        <i class="fas fa-heading me-2 text-primary"></i>Заголовок объявления *
+                                    </label>
+                                    <input type="text" 
+                                           name="title" 
+                                           id="id_title" 
+                                           class="form-control form-control-lg {% if form.title.errors %}is-invalid{% endif %}" 
+                                           value="{{ form.title.value|default:'' }}" 
+                                           maxlength="200" 
+                                           required
+                                           placeholder="Например: Сдам современную 2-комнатную квартиру в центре города">
+                                    {% if form.title.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.title.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text text-muted">
+                                        <small>Придумайте яркий и информативный заголовок, который привлечет внимание</small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-4">
+                                    <label for="id_category" class="form-label fw-semibold">
+                                        <i class="fas fa-tag me-2 text-primary"></i>Категория *
+                                    </label>
+                                    <select name="category" 
+                                            id="id_category" 
+                                            class="form-select form-select-lg {% if form.category.errors %}is-invalid{% endif %}" 
+                                            required>
+                                        <option value="">Выберите категорию</option>
+                                        {% for category in categories %}
+                                        <option value="{{ category.id }}" 
+                                                {% if form.category.value == category.id %}selected{% endif %}>
+                                            {{ category.name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    {% if form.category.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.category.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="id_description" class="form-label fw-semibold">
+                                    <i class="fas fa-align-left me-2 text-primary"></i>Подробное описание квартиры *
+                                </label>
+                                <textarea name="description" 
+                                          id="id_description" 
+                                          class="form-control {% if form.description.errors %}is-invalid{% endif %}" 
+                                          rows="6" 
+                                          required
+                                          placeholder="Опишите подробно вашу квартиру:
+• Состояние ремонта
+• Наличие мебели и техники
+• Район и инфраструктуру
+• Условия аренды
+• Особенности и преимущества">{{ form.description.value|default:'' }}</textarea>
+                                {% if form.description.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.description.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <div class="form-text text-muted">
+                                        <small>Чем подробнее описание, тем больше откликов вы получите</small>
+                                    </div>
+                                    <div class="form-text">
+                                        <span id="charCount" class="fw-bold">0</span>/2000 символов
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                         <div class="card mb-4">
+            <div class="card-header">Изображения</div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="{{ image_form.images.id_for_label }}" class="form-label">
+                        {{ image_form.images.label }}
+                    </label>
+                    <input type="file" name="images" multiple class="form-control" 
+                           accept="image/*" id="{{ image_form.images.id_for_label }}">
+                    <div class="form-text">{{ image_form.images.help_text }}</div>
+                </div>
+            </div>
+        </div>
+                        <!-- Шаг 2: Характеристики -->
+                        <div class="form-section mb-5">
+                            <div class="section-header mb-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="section-number bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                         style="width: 40px; height: 40px;">2</div>
+                                    <h4 class="mb-0 text-success">
+                                        <i class="fas fa-home me-2"></i>
+                                        Характеристики квартиры
+                                    </h4>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 mb-4">
+                                    <label for="id_price" class="form-label fw-semibold">
+                                        <i class="fas fa-ruble-sign me-2 text-success"></i>Цена в месяц *
+                                    </label>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-text bg-light border-end-0">
+                                            <i class="fas fa-money-bill-wave text-success"></i>
+                                        </span>
+                                        <input type="number" 
+                                               name="price" 
+                                               id="id_price" 
+                                               class="form-control {% if form.price.errors %}is-invalid{% endif %}" 
+                                               value="{{ form.price.value|default:'' }}" 
+                                               min="1000" 
+                                               step="1000" 
+                                               required
+                                               placeholder="25000">
+                                        <span class="input-group-text bg-light">₽/месяц</span>
+                                    </div>
+                                    {% if form.price.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.price.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text text-muted">
+                                        <small>Рекомендуемая цена от 1000 рублей</small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-4">
+                                    <label for="id_area" class="form-label fw-semibold">
+                                        <i class="fas fa-expand-arrows-alt me-2 text-success"></i>Площадь (м²) *
+                                    </label>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-text bg-light border-end-0">
+                                            <i class="fas fa-ruler-combined text-success"></i>
+                                        </span>
+                                        <input type="number" 
+                                               name="area" 
+                                               id="id_area" 
+                                               class="form-control {% if form.area.errors %}is-invalid{% endif %}" 
+                                               value="{{ form.area.value|default:'' }}" 
+                                               min="10" 
+                                               step="0.1" 
+                                               required
+                                               placeholder="45.5">
+                                        <span class="input-group-text bg-light">м²</span>
+                                    </div>
+                                    {% if form.area.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.area.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text text-muted">
+                                        <small>Общая площадь квартиры</small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-4">
+                                    <label for="id_rooms" class="form-label fw-semibold">
+                                        <i class="fas fa-bed me-2 text-success"></i>Количество комнат *
+                                    </label>
+                                    <select name="rooms" 
+                                            id="id_rooms" 
+                                            class="form-select form-select-lg {% if form.rooms.errors %}is-invalid{% endif %}" 
+                                            required>
+                                        <option value="">Выберите количество</option>
+                                        <option value="1" {% if form.rooms.value == '1' %}selected{% endif %}>1 комната</option>
+                                        <option value="2" {% if form.rooms.value == '2' %}selected{% endif %}>2 комнаты</option>
+                                        <option value="3" {% if form.rooms.value == '3' %}selected{% endif %}>3 комнаты</option>
+                                        <option value="4" {% if form.rooms.value == '4' %}selected{% endif %}>4 комнаты</option>
+                                        <option value="5" {% if form.rooms.value == '5' %}selected{% endif %}>5+ комнат</option>
+                                    </select>
+                                    {% if form.rooms.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.rooms.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Шаг 3: Контактная информация -->
+                        <div class="form-section mb-5">
+                            <div class="section-header mb-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="section-number bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                         style="width: 40px; height: 40px;">3</div>
+                                    <h4 class="mb-0 text-info">
+                                        <i class="fas fa-phone me-2"></i>
+                                        Контактная информация
+                                    </h4>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label for="id_address" class="form-label fw-semibold">
+                                        <i class="fas fa-map-marker-alt me-2 text-info"></i>Адрес квартиры *
+                                    </label>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-text bg-light border-end-0">
+                                            <i class="fas fa-map-pin text-info"></i>
+                                        </span>
+                                        <input type="text" 
+                                               name="address" 
+                                               id="id_address" 
+                                               class="form-control {% if form.address.errors %}is-invalid{% endif %}" 
+                                               value="{{ form.address.value|default:'' }}" 
+                                               maxlength="300" 
+                                               required
+                                               placeholder="г. Москва, ул. Примерная, д. 123, кв. 45">
+                                    </div>
+                                    {% if form.address.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.address.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text text-muted">
+                                        <small>Полный адрес с городом, улицей, домом и квартирой</small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-4">
+                                    <label for="id_contact_phone" class="form-label fw-semibold">
+                                        <i class="fas fa-mobile-alt me-2 text-info"></i>Контактный телефон *
+                                    </label>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-text bg-light border-end-0">
+                                            <i class="fas fa-phone text-info"></i>
+                                        </span>
+                                        <input type="tel" 
+                                               name="contact_phone" 
+                                               id="id_contact_phone" 
+                                               class="form-control {% if form.contact_phone.errors %}is-invalid{% endif %}" 
+                                               value="{{ form.contact_phone.value|default:'' }}" 
+                                               maxlength="20" 
+                                               required
+                                               placeholder="+7 (999) 999-99-99">
+                                    </div>
+                                    {% if form.contact_phone.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.contact_phone.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }} 
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-text text-muted">
+                                        <small>Телефон для связи с потенциальными арендаторами</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Действия -->
+                        <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top">
+                            <div>
+                                <a href="{% url 'change' %}" class="btn btn-outline-secondary btn-lg">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    Вернуться к списку
+                                </a>
+                            </div>
+                            
+                            <div class="d-flex gap-3">
+                                <button type="button" class="btn btn-outline-warning btn-lg" id="saveDraftBtn">
+                                    <i class="fas fa-save me-2"></i>
+                                    Сохранить черновик
+                                </button>
+                                <button type="submit" class="btn btn-primary btn-lg px-5" id="submitBtn">
+                                    <i class="fas fa-paper-plane me-2"></i>
+                                    Опубликовать объявление
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card-footer bg-light py-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary rounded-circle p-2 me-3">
+                                    <i class="fas fa-lightbulb text-white"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Советы по заполнению</h6>
+                                    <p class="mb-0 text-muted small">
+                                        Добавляйте качественные фотографии и подробные описания для лучшего отклика
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <small class="text-muted">
+                                <i class="fas fa-shield-alt me-1 text-primary"></i>
+                                Ваши данные защищены
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 20px;
+    margin-top: 1rem;
+    border: none;
+}
+
+.card-header {
+    border-radius: 20px 20px 0 0 !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.form-section {
+    padding: 2rem;
+    border-radius: 15px;
+    background: #f8f9fa;
+    border-left: 4px solid #667eea;
+}
+
+.section-number {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.border-top {
+    border-top-color: rgba(0,0,0,0.1) !important;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+}
+
+.progress {
+    overflow: visible;
+}
+
+.progress-bar {
+    position: relative;
+    overflow: visible;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    right: -8px;
+    top: -2px;
+    width: 16px;
+    height: 16px;
+    background: #667eea;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px #667eea;
+}
+
+/* Анимации */
+.form-section {
+    transition: all 0.3s ease;
+}
+
+.form-section:hover {
+    transform: translateX(5px);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1.5rem !important;
+    }
+    
+    .form-section {
+        padding: 1.5rem;
+    }
+    
+    .btn-lg {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('postForm');
+    const progressBar = document.getElementById('formProgress');
+    const progressText = document.getElementById('progressText');
+    const charCount = document.getElementById('charCount');
+    const descriptionField = document.getElementById('id_description');
+    const saveDraftBtn = document.getElementById('saveDraftBtn');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // Автофокус на заголовок
+    document.getElementById('id_title')?.focus();
+
+    // Подсчет символов
+    if (descriptionField && charCount) {
+        descriptionField.addEventListener('input', function() {
+            const length = this.value.length;
+            charCount.textContent = length;
+            
+            if (length < 50) {
+                charCount.className = 'fw-bold text-danger';
+            } else if (length < 100) {
+                charCount.className = 'fw-bold text-warning';
+            } else if (length < 1800) {
+                charCount.className = 'fw-bold text-success';
+            } else {
+                charCount.className = 'fw-bold text-danger';
+            }
+            
+            if (length > 2000) {
+                this.value = this.value.substring(0, 2000);
+                charCount.textContent = '2000';
+            }
+            
+            updateProgress();
+        });
+    }
+
+    // Маска для телефона
+    document.getElementById('id_contact_phone')?.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        
+        if (value.startsWith('7') || value.startsWith('8')) {
+            value = value.substring(1);
+        }
+        
+        let formattedValue = '+7';
+        if (value.length > 0) {
+            formattedValue += ' (' + value.substring(0, 3);
+        }
+        if (value.length > 3) {
+            formattedValue += ') ' + value.substring(3, 6);
+        }
+        if (value.length > 6) {
+            formattedValue += '-' + value.substring(6, 8);
+        }
+        if (value.length > 8) {
+            formattedValue += '-' + value.substring(8, 10);
+        }
+        
+        e.target.value = formattedValue;
+        updateProgress();
+    });
+
+    // Прогресс заполнения
+    function updateProgress() {
+        const fields = [
+            'id_title', 'id_category', 'id_description', 
+            'id_price', 'id_area', 'id_rooms', 
+            'id_address', 'id_contact_phone'
+        ];
+        
+        let filled = 0;
+        fields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                if (field.type === 'select-one') {
+                    if (field.value !== '') filled++;
+                } else if (field.type === 'textarea') {
+                    if (field.value.trim().length >= 50) filled++;
+                } else {
+                    if (field.value.trim() !== '') filled++;
+                }
+            }
+        });
+        
+        const progress = Math.round((filled / fields.length) * 100);
+        if (progressBar && progressText) {
+            progressBar.style.width = progress + '%';
+            progressText.textContent = progress + '%';
+            
+            // Изменение цвета прогресс-бара
+            if (progress < 30) {
+                progressBar.className = 'progress-bar bg-danger';
+            } else if (progress < 70) {
+                progressBar.className = 'progress-bar bg-warning';
+            } else {
+                progressBar.className = 'progress-bar bg-gradient-primary';
+            }
+        }
+    }
+
+    // Обновление прогресса при изменении полей
+    const formFields = document.querySelectorAll('input, select, textarea');
+    formFields.forEach(field => {
+        field.addEventListener('input', updateProgress);
+        field.addEventListener('change', updateProgress);
+    });
+
+    // Инициализация прогресса
+    updateProgress();
+
+    // Сохранение черновика
+    saveDraftBtn?.addEventListener('click', function() {
+        if (confirm('Сохранить объявление как черновик?')) {
+            // Здесь можно добавить логику для сохранения черновика
+            form.submit();
+        }
+    });
+
+    // Валидация перед отправкой
+    form?.addEventListener('submit', function(e) {
+        const description = document.getElementById('id_description');
+        if (description && description.value.trim().length < 50) {
+            e.preventDefault();
+            alert('Описание должно содержать минимум 50 символов');
+            description.focus();
+            return;
+        }
+        
+        // Показываем loading state
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Публикация...';
+        submitBtn.disabled = true;
+    });
+
+    // Предотвращение потери данных
+    let formChanged = false;
+    form?.addEventListener('input', function() {
+        formChanged = true;
+    });
+
+    window.addEventListener('beforeunload', function(e) {
+        if (formChanged) {
+            e.preventDefault();
+            e.returnValue = 'У вас есть несохраненные изменения. Вы уверены, что хотите покинуть страницу?';
+        }
+    });
+
+    form?.addEventListener('submit', function() {
+        formChanged = false;
+    });
+});
+</script>
+{% endblock %}
