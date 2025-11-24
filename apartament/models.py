@@ -125,7 +125,7 @@ class Profile(models.Model):
         return f'Профиль {self.user.username}'
     
 class PostImage(models.Model):
-    Post = models.ForeignKey(
+    post = models.ForeignKey(
         Post, 
         related_name='images', 
         on_delete=models.CASCADE,
