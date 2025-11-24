@@ -13,20 +13,20 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
+<div class="container-fluid px-0">
+    <div class="row justify-content-center mx-0">
+        <div class="col-12 col-md-6 col-lg-5 px-3 px-md-4">
             <div class="card shadow-lg border-0">
-                <div class="card-header bg-primary text-white text-center py-4">
-                    <h3 class="mb-0">
+                <div class="card-header bg-primary text-white text-center py-3 py-md-4">
+                    <h3 class="mb-0 fs-4 fs-md-3">
                         <i class="fas fa-sign-in-alt me-2"></i>
                         Авторизация
                     </h3>
                 </div>
                 
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-md-4">
                     {% if messages %}
-                    <div class="messages mb-4">
+                    <div class="messages mb-3 mb-md-4">
                         {% for message in messages %}
                         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                             {{ message }}
@@ -48,51 +48,51 @@
                         {% csrf_token %}
                         
                         <div class="mb-3">
-                            <label for="id_username" class="form-label">
+                            <label for="id_username" class="form-label fw-semibold fs-6">
                                 <i class="fas fa-user me-2 text-primary"></i>Имя пользователя
                             </label>
                             <div class="input-group">
-                                <span class="input-group-text bg-light">
+                                <span class="input-group-text bg-light py-2">
                                     <i class="fas fa-user text-muted"></i>
                                 </span>
                                 <input type="text" 
                                        name="username" 
                                        id="id_username" 
-                                       class="form-control form-control-lg" 
+                                       class="form-control py-2" 
                                        placeholder="Введите ваше имя пользователя" 
                                        required
                                        autofocus>
                             </div>
-                            <div class="invalid-feedback">
+                            <div class="invalid-feedback fs-7">
                                 Пожалуйста, введите имя пользователя.
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label for="id_password" class="form-label">
+                            <label for="id_password" class="form-label fw-semibold fs-6">
                                 <i class="fas fa-lock me-2 text-primary"></i>Пароль
                             </label>
                             <div class="input-group">
-                                <span class="input-group-text bg-light">
+                                <span class="input-group-text bg-light py-2">
                                     <i class="fas fa-lock text-muted"></i>
                                 </span>
                                 <input type="password" 
                                        name="password" 
                                        id="id_password" 
-                                       class="form-control form-control-lg" 
+                                       class="form-control py-2" 
                                        placeholder="Введите ваш пароль" 
                                        required>
-                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                <button class="btn btn-outline-secondary py-2" type="button" id="togglePassword">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
-                            <div class="invalid-feedback">
+                            <div class="invalid-feedback fs-7">
                                 Пожалуйста, введите пароль.
                             </div>
                         </div>
 
                         <div class="d-grid mb-3">
-                            <button class="btn btn-primary btn-lg" type="submit" name="login">
+                            <button class="btn btn-primary py-2" type="submit" name="login">
                                 <i class="fas fa-sign-in-alt me-2"></i>
                                 Войти в систему
                             </button>
@@ -100,15 +100,15 @@
 
                         <div class="form-check mb-3">
                             <input class="form-check-input" type="checkbox" id="rememberMe">
-                            <label class="form-check-label text-muted" for="rememberMe">
+                            <label class="form-check-label text-muted fs-7" for="rememberMe">
                                 Запомнить меня
                             </label>
                         </div>
                     </form>
 
                     <div class="text-center">
-                        <p class="text-muted mb-2">Еще нет аккаунта?</p>
-                        <a href="{% url 'registration' %}" class="btn btn-outline-primary">
+                        <p class="text-muted mb-2 fs-7">Еще нет аккаунта?</p>
+                        <a href="{% url 'registration' %}" class="btn btn-outline-primary w-100 w-md-auto">
                             <i class="fas fa-user-plus me-2"></i>
                             Зарегистрироваться
                         </a>
@@ -116,7 +116,7 @@
                 </div>
 
                 <div class="card-footer bg-light text-center py-3">
-                    <small class="text-muted">
+                    <small class="text-muted fs-7">
                         <i class="fas fa-shield-alt me-1"></i>
                         Ваши данные защищены
                     </small>
@@ -129,30 +129,29 @@
 <style>
 .card {
     border-radius: 15px;
-    margin-top: 2rem;
+    margin-top: 1rem;
 }
 
 .card-header {
     border-radius: 15px 15px 0 0 !important;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
+    background: linear-gradient(135deg, #2c5aa0 0%, #1e3a5f 100%) !important;
 }
 
 .form-control:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 0.2rem rgba(44, 90, 160, 0.25);
+    border-color: #2c5aa0;
+    box-shadow: 0 0 0 0.2rem rgba(44, 90, 160, 0.15);
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    background: linear-gradient(135deg, #2c5aa0 0%, #1e3a5f 100%);
     border: none;
-    padding: 0.75rem 1.5rem;
     font-weight: 500;
     transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(44, 90, 160, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(44, 90, 160, 0.3);
 }
 
 .input-group-text {
@@ -169,7 +168,7 @@
 }
 
 .form-control:focus + .input-group-text {
-    border-color: var(--primary);
+    border-color: #2c5aa0;
 }
 
 .invalid-feedback {
@@ -179,45 +178,105 @@
 .was-validated .form-control:invalid ~ .invalid-feedback {
     display: block;
 }
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1.5rem !important;
+    }
+    
+    .btn {
+        padding: 0.75rem 1rem;
+    }
+    
+    .input-group .form-control,
+    .input-group .form-select {
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .container-fluid {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+    
+    .card-header {
+        padding: 1rem !important;
+    }
+    
+    .btn {
+        font-size: 0.9rem;
+    }
+}
+
+/* Touch оптимизации */
+.btn, .form-control, .form-select {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.form-control:focus, .form-select:focus {
+    transform: scale(1.02);
+    transition: all 0.2s ease;
+}
 </style>
 
 <script>
-// Показать/скрыть пароль
-document.getElementById('togglePassword').addEventListener('click', function() {
-    const passwordInput = document.getElementById('id_password');
-    const icon = this.querySelector('i');
-    
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
-    } else {
-        passwordInput.type = 'password';
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
-    }
-});
-
-// Валидация формы
-(function() {
-    'use strict';
-    window.addEventListener('load', function() {
-        var forms = document.getElementsByClassName('needs-validation');
-        var validation = Array.prototype.filter.call(forms, function(form) {
-            form.addEventListener('submit', function(event) {
-                if (form.checkValidity() === false) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            }, false);
-        });
-    }, false);
-})();
-
-// Автофокус на поле username
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('id_username').focus();
+    // Показать/скрыть пароль
+    const togglePassword = document.getElementById('togglePassword');
+    if (togglePassword) {
+        togglePassword.addEventListener('click', function() {
+            const passwordInput = document.getElementById('id_password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    }
+
+    // Валидация формы
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+
+    // Автофокус на поле username
+    document.getElementById('id_username')?.focus();
+
+    // Touch оптимизации для мобильных
+    function initTouchOptimizations() {
+        const inputs = document.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.98)';
+            }, { passive: true });
+            
+            input.addEventListener('touchend', function() {
+                this.style.transform = '';
+            }, { passive: true });
+        });
+    }
+
+    initTouchOptimizations();
 });
 </script>
 {% endblock %}

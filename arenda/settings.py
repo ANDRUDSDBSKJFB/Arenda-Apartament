@@ -33,7 +33,15 @@ SECRET_KEY = 'django-insecure-6m8q619+8=t6_e^whsea=m*92@sg_$)zj)x5^j4erx09r=gj(e
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = ['localhost',
+    '127.0.0.1',
+    '0.0.0.0',
+    '192.168.1.100', 
+    '100.91.18.253', 
+    '192.168.1.*',
+    '*',    
+    '.local',  ]
 
 
 # Application definition
@@ -45,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'apartament'
 ]
 
@@ -63,9 +72,7 @@ ROOT_URLCONF = 'arenda.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            BASE_DIR / 'templates',  # This line is crucial
-        ],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

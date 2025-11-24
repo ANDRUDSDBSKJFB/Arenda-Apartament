@@ -1,0 +1,131 @@
+<!-- templates/400.html -->
+{% extends "main/layout.html" %}
+
+{% block title %}Некорректный запрос (400) - Аренда квартир{% endblock %}
+
+{% block page_title %}Некорректный запрос{% endblock %}
+
+{% block page_subtitle %}Сервер не может обработать ваш запрос{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <!-- Иллюстрация -->
+            <div class="error-illustration mb-5">
+                <div class="error-icon">
+                    <i class="fas fa-exclamation-triangle fa-5x text-warning mb-4"></i>
+                </div>
+                <h1 class="display-1 fw-bold text-warning mb-3">400</h1>
+            </div>
+
+            <!-- Сообщение об ошибке -->
+            <div class="error-content mb-5">
+                <h2 class="h3 mb-3">Некорректный запрос</h2>
+                <p class="lead text-muted mb-4">
+                    Сервер не может обработать ваш запрос из-за некорректного синтаксиса. 
+                    Возможно, введены неправильные данные или повреждены cookies.
+                </p>
+
+                <!-- Решения -->
+                <div class="solutions mb-5">
+                    <h4 class="h5 mb-3">Что попробовать:</h4>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="solution-item text-center p-3">
+                                <div class="solution-icon bg-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" 
+                                     style="width: 60px; height: 60px;">
+                                    <i class="fas fa-cookie text-white fa-lg"></i>
+                                </div>
+                                <h6>Очистить cookies</h6>
+                                <p class="small text-muted">Удалите cookies браузера</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="solution-item text-center p-3">
+                                <div class="solution-icon bg-success rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" 
+                                     style="width: 60px; height: 60px;">
+                                    <i class="fas fa-redo text-white fa-lg"></i>
+                                </div>
+                                <h6>Обновить страницу</h6>
+                                <p class="small text-muted">Перезагрузите страницу</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="solution-item text-center p-3">
+                                <div class="solution-icon bg-info rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" 
+                                     style="width: 60px; height: 60px;">
+                                    <i class="fas fa-history text-white fa-lg"></i>
+                                </div>
+                                <h6>Другой браузер</h6>
+                                <p class="small text-muted">Попробуйте другой браузер</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кнопки действий -->
+                <div class="error-actions">
+                    <div class="row g-3 justify-content-center">
+                        <div class="col-auto">
+                            <a href="{% url 'post-list' %}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-home me-2"></i>На главную
+                            </a>
+                        </div>
+                        <div class="col-auto">
+                            <button onclick="location.reload()" class="btn btn-warning btn-lg">
+                                <i class="fas fa-redo me-2"></i>Обновить
+                            </button>
+                        </div>
+                        <div class="col-auto">
+                            <button onclick="clearCookies()" class="btn btn-outline-info btn-lg">
+                                <i class="fas fa-cookie-bite me-2"></i>Очистить Cookies
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function clearCookies() {
+    document.cookie.split(";").forEach(function(c) {
+        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    });
+    alert('Cookies очищены. Обновите страницу.');
+    location.reload();
+}
+</script>
+
+<style>
+.error-illustration {
+    animation: wobble 2s infinite;
+}
+
+@keyframes wobble {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-2deg); }
+    75% { transform: rotate(2deg); }
+}
+
+.solution-item {
+    transition: all 0.3s ease;
+}
+
+.solution-item:hover {
+    transform: translateY(-5px);
+}
+
+.solution-item:hover .solution-icon {
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .display-1 {
+        font-size: 5rem;
+    }
+}
+</style>
+{% endblock %}

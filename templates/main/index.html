@@ -13,56 +13,56 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid px-0">
     <!-- Поиск и фильтры -->
-    <div class="row mb-5">
-        <div class="col-12">
+    <div class="row mb-4 mx-0">
+        <div class="col-12 px-3 px-md-4">
             <div class="card shadow-lg border-0">
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-md-4">
                     <form method="get" action="{% url 'post-list' %}" id="searchForm">
-                        <div class="row g-3 align-items-end">
+                        <div class="row g-2 g-md-3 align-items-end">
                             <!-- Поиск по названию и описанию -->
-                            <div class="col-md-4">
-                                <label class="form-label fw-semibold">
-                                    <i class="fas fa-search me-2 text-primary"></i>Поиск
+                            <div class="col-12 col-md-4">
+                                <label class="form-label fw-semibold small">
+                                    <i class="fas fa-search me-1 text-primary"></i>Поиск
                                 </label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text bg-light border-end-0 py-2">
                                         <i class="fas fa-home text-muted"></i>
                                     </span>
                                     <input type="text" 
                                            name="q" 
                                            id="searchInput"
-                                           class="form-control" 
+                                           class="form-control py-2" 
                                            placeholder="Название, район, улица..."
                                            value="{{ request.GET.q }}">
                                 </div>
                             </div>
 
                             <!-- Фильтр по цене -->
-                            <div class="col-md-3">
-                                <label class="form-label fw-semibold">
-                                    <i class="fas fa-ruble-sign me-2 text-primary"></i>Цена до
+                            <div class="col-12 col-md-3">
+                                <label class="form-label fw-semibold small">
+                                    <i class="fas fa-ruble-sign me-1 text-primary"></i>Цена до
                                 </label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text bg-light border-end-0 py-2">
                                         <i class="fas fa-money-bill-wave text-muted"></i>
                                     </span>
                                     <input type="number" 
                                            name="max_price" 
-                                           class="form-control" 
+                                           class="form-control py-2" 
                                            placeholder="Макс. цена"
                                            value="{{ request.GET.max_price }}">
-                                    <span class="input-group-text bg-light">₽/мес</span>
+                                    <span class="input-group-text bg-light py-2">₽/мес</span>
                                 </div>
                             </div>
 
                             <!-- Фильтр по комнатам -->
-                            <div class="col-md-3">
-                                <label class="form-label fw-semibold">
-                                    <i class="fas fa-bed me-2 text-primary"></i>Комнат
+                            <div class="col-12 col-md-3">
+                                <label class="form-label fw-semibold small">
+                                    <i class="fas fa-bed me-1 text-primary"></i>Комнат
                                 </label>
-                                <select name="rooms" class="form-select">
+                                <select name="rooms" class="form-select form-select-sm py-2">
                                     <option value="">Любое количество</option>
                                     <option value="1" {% if request.GET.rooms == '1' %}selected{% endif %}>1 комната</option>
                                     <option value="2" {% if request.GET.rooms == '2' %}selected{% endif %}>2 комнаты</option>
@@ -73,29 +73,30 @@
                             </div>
 
                             <!-- Кнопки -->
-                            <div class="col-md-2">
-                                <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fas fa-search me-2"></i>Найти
+                            <div class="col-12 col-md-2">
+                                <button type="submit" class="btn btn-primary w-100 py-2">
+                                    <i class="fas fa-search me-1"></i>
+                                    <span class="d-none d-sm-inline">Найти</span>
                                 </button>
                             </div>
                         </div>
 
                         <!-- Расширенные фильтры -->
-                        <div class="row mt-3" id="advancedFilters" style="display: none;">
-                            <div class="col-md-3">
-                                <label class="form-label fw-semibold">Площадь от</label>
-                                <div class="input-group">
+                        <div class="row mt-2 mt-md-3 g-2 g-md-3" id="advancedFilters" style="display: none;">
+                            <div class="col-12 col-sm-6 col-md-3">
+                                <label class="form-label fw-semibold small">Площадь от</label>
+                                <div class="input-group input-group-sm">
                                     <input type="number" 
                                            name="min_area" 
-                                           class="form-control" 
+                                           class="form-control py-2" 
                                            placeholder="Мин. площадь"
                                            value="{{ request.GET.min_area }}">
-                                    <span class="input-group-text bg-light">м²</span>
+                                    <span class="input-group-text bg-light py-2">м²</span>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-semibold">Сортировка</label>
-                                <select name="sort" class="form-select">
+                            <div class="col-12 col-sm-6 col-md-3">
+                                <label class="form-label fw-semibold small">Сортировка</label>
+                                <select name="sort" class="form-select form-select-sm py-2">
                                     <option value="-created" {% if request.GET.sort == '-created' %}selected{% endif %}>Сначала новые</option>
                                     <option value="created" {% if request.GET.sort == 'created' %}selected{% endif %}>Сначала старые</option>
                                     <option value="price" {% if request.GET.sort == 'price' %}selected{% endif %}>По цене (возр.)</option>
@@ -105,14 +106,15 @@
                             </div>
                         </div>
 
-                        <div class="text-center mt-3">
-                            <button type="button" class="btn btn-link text-decoration-none" id="toggleFilters">
+                        <div class="text-center mt-2 mt-md-3">
+                            <button type="button" class="btn btn-link text-decoration-none p-1" id="toggleFilters">
                                 <i class="fas fa-sliders-h me-1"></i>
-                                <span id="filtersText">Расширенные фильтры</span>
+                                <span id="filtersText" class="small">Расширенные фильтры</span>
                             </button>
                             {% if request.GET %}
-                            <a href="{% url 'post-list' %}" class="btn btn-link text-decoration-none text-danger ms-3">
-                                <i class="fas fa-times me-1"></i>Сбросить фильтры
+                            <a href="{% url 'post-list' %}" class="btn btn-link text-decoration-none text-danger ms-2 ms-md-3 p-1">
+                                <i class="fas fa-times me-1"></i>
+                                <span class="small">Сбросить фильтры</span>
                             </a>
                             {% endif %}
                         </div>
@@ -123,8 +125,8 @@
     </div>
 
     <!-- Статистика -->
-    <div class="row mb-4">
-        <div class="col-12">
+    <div class="row mb-4 mx-0">
+        <div class="col-12 px-3 px-md-4">
             <div class="stats-container">
                 <div class="stat-card">
                     <div class="stat-icon bg-primary">
@@ -167,146 +169,143 @@
     </div>
 
     <!-- Результаты поиска -->
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="text-primary mb-0">
+    <div class="row mx-0">
+        <div class="col-12 px-3 px-md-4">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 mb-md-4 gap-2">
+                <h4 class="text-primary mb-0 fs-5 fs-md-4">
                     <i class="fas fa-list me-2"></i>
-                    Найдено объявлений: <span class="badge bg-primary">{{ posts.paginator.count }}</span>
+                    Найдено: <span class="badge bg-primary fs-6">{{ posts.paginator.count }}</span>
                 </h4>
                 
                 {% if user.is_authenticated %}
-                <a href="{% url 'post-create' %}" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Добавить объявление
+                <a href="{% url 'post-create' %}" class="btn btn-primary btn-sm py-2">
+                    <i class="fas fa-plus me-1"></i>
+                    <span class="d-none d-sm-inline">Добавить объявление</span>
+                    <span class="d-inline d-sm-none">Добавить</span>
                 </a>
                 {% endif %}
             </div>
 
             {% if posts %}
-<div class="row" id="postsGrid">
-    {% for post in posts %}
-    <div class="col-xl-4 col-lg-6 col-md-6 mb-4 post-card">
-        <div class="card property-card h-100 shadow-sm border-0">
-            <div class="property-image position-relative">
-                {% if post.images.first %}
-                <!-- Если есть изображения, показываем первое -->
-                <img src="{{ post.images.first.image.url }}" 
-                     class="card-img-top property-main-image"
-                     alt="{{ post.title }}"
-                     style="height: 200px; object-fit: cover;">
-                {% else %}
-                <!-- Заглушка если нет изображений -->
-                <div class="placeholder-image bg-gradient-primary d-flex align-items-center justify-content-center"
-                     style="height: 200px;">
-                    <i class="fas fa-home fa-3x text-white"></i>
-                </div>
-                {% endif %}
-                
-                <div class="property-badges position-absolute top-0 end-0 p-2">
-                    <span class="badge bg-dark bg-opacity-75">
-                        <i class="fas fa-eye me-1"></i>{{ post.views }}
-                    </span>
-                    {% if post.created|timesince < "1 day" %}
-                    <span class="badge bg-danger ms-1">Новое</span>
-                    {% endif %}
-                    
-                    <!-- Бейдж количества фото -->
-                    {% if post.images.count > 0 %}
-                    <span class="badge bg-primary ms-1">
-                        <i class="fas fa-camera me-1"></i>{{ post.images.count }}
-                    </span>
-                    {% endif %}
-                </div>
-                
-                <div class="property-price position-absolute bottom-0 start-0 m-3">
-                    <span class="price-tag bg-dark bg-opacity-90 text-white px-3 py-2 rounded-pill">
-                        {{ post.price }} ₽/мес
-                    </span>
-                </div>
-                
-                <!-- Индикатор статуса -->
-                {% if user.is_staff or user == post.owner %}
-                <div class="property-status position-absolute top-0 start-0 m-2">
-                    <span class="badge 
-                        {% if post.status == 'active' %}bg-success
-                        {% elif post.status == 'moderation' %}bg-warning
-                        {% elif post.status == 'draft' %}bg-secondary
-                        {% elif post.status == 'rejected' %}bg-danger
-                        {% else %}bg-info{% endif %}">
-                        {{ post.get_status_display }}
-                    </span>
-                </div>
-                {% endif %}
-            </div>
-            
-            <div class="card-body">
-                <h5 class="card-title text-primary">
-                    <a href="{% url 'post-detail' post.id %}" class="text-decoration-none text-primary">
-                        {{ post.title }}
-                    </a>
-                </h5>
-                <p class="card-text text-muted small">{{ post.description|truncatewords:20 }}</p>
-                
-                <div class="property-features mb-3">
-                    <div class="row text-center">
-                        <div class="col-4">
-                            <div class="feature-item">
-                                <i class="fas fa-bed text-primary mb-1"></i>
-                                <div class="feature-value fw-bold">{{ post.rooms }} комн.</div>
+            <div class="row g-3 g-md-4 mx-0" id="postsGrid">
+                {% for post in posts %}
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-4 post-card px-2 px-sm-3">
+                    <div class="card property-card h-100 shadow-sm border-0">
+                        <div class="property-image position-relative">
+                            {% if post.images.first %}
+                            <img src="{{ post.images.first.image.url }}" 
+                                 class="card-img-top property-main-image"
+                                 alt="{{ post.title }}"
+                                 style="height: 180px; object-fit: cover;">
+                            {% else %}
+                            <div class="placeholder-image bg-gradient-primary d-flex align-items-center justify-content-center"
+                                 style="height: 180px;">
+                                <i class="fas fa-home fa-2x text-white"></i>
                             </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="feature-item">
-                                <i class="fas fa-expand-arrows-alt text-primary mb-1"></i>
-                                <div class="feature-value fw-bold">{{ post.area }} м²</div>
+                            {% endif %}
+                            
+                            <div class="property-badges position-absolute top-0 end-0 p-1 p-sm-2">
+                                <span class="badge bg-dark bg-opacity-75 fs-7">
+                                    <i class="fas fa-eye me-1"></i>{{ post.views }}
+                                </span>
+                                {% if post.created|timesince < "1 day" %}
+                                <span class="badge bg-danger ms-1 fs-7">Новое</span>
+                                {% endif %}
+                                
+                                {% if post.images.count > 0 %}
+                                <span class="badge bg-primary ms-1 fs-7">
+                                    <i class="fas fa-camera me-1"></i>{{ post.images.count }}
+                                </span>
+                                {% endif %}
                             </div>
+                            
+                            <div class="property-price position-absolute bottom-0 start-0 m-2">
+                                <span class="price-tag bg-dark bg-opacity-90 text-white px-2 px-sm-3 py-1 py-sm-2 rounded-pill fs-6 fs-sm-7">
+                                    {{ post.price }} ₽
+                                </span>
+                            </div>
+                            
+                            {% if user.is_staff or user == post.owner %}
+                            <div class="property-status position-absolute top-0 start-0 m-1">
+                                <span class="badge fs-7 
+                                    {% if post.status == 'active' %}bg-success
+                                    {% elif post.status == 'moderation' %}bg-warning
+                                    {% elif post.status == 'draft' %}bg-secondary
+                                    {% elif post.status == 'rejected' %}bg-danger
+                                    {% else %}bg-info{% endif %}">
+                                    {{ post.get_status_display }}
+                                </span>
+                            </div>
+                            {% endif %}
                         </div>
-                        <div class="col-4">
-                            <div class="feature-item">
-                                <i class="fas fa-calendar text-primary mb-1"></i>
-                                <div class="feature-value fw-bold">{{ post.created|date:"d.m" }}</div>
+                        
+                        <div class="card-body p-3">
+                            <h5 class="card-title text-primary fs-6 mb-2">
+                                <a href="{% url 'post-detail' post.id %}" class="text-decoration-none text-primary stretched-link">
+                                    {{ post.title|truncatewords:8 }}
+                                </a>
+                            </h5>
+                            <p class="card-text text-muted small mb-3">{{ post.description|truncatewords:12 }}</p>
+                            
+                            <div class="property-features mb-3">
+                                <div class="row text-center g-1">
+                                    <div class="col-4">
+                                        <div class="feature-item">
+                                            <i class="fas fa-bed text-primary mb-1 fs-6"></i>
+                                            <div class="feature-value fw-bold fs-7">{{ post.rooms }} комн.</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="feature-item">
+                                            <i class="fas fa-expand-arrows-alt text-primary mb-1 fs-6"></i>
+                                            <div class="feature-value fw-bold fs-7">{{ post.area }} м²</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="feature-item">
+                                            <i class="fas fa-calendar text-primary mb-1 fs-6"></i>
+                                            <div class="feature-value fw-bold fs-7">{{ post.created|date:"d.m" }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="property-location mb-3">
+                                <i class="fas fa-map-marker-alt text-muted me-1 fs-7"></i>
+                                <small class="text-muted fs-7">{{ post.address|truncatewords:2 }}</small>
+                            </div>
+                            
+                            {% if post.category %}
+                            <div class="property-category mb-2">
+                                <span class="badge bg-light text-dark border fs-7">
+                                    <i class="fas fa-tag me-1"></i>{{ post.category.name }}
+                                </span>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-auto pt-2">
+                                <div class="owner-info">
+                                    <small class="text-muted fs-7">
+                                        <i class="fas fa-user me-1"></i>{{ post.owner.username }}
+                                    </small>
+                                </div>
+                                <a href="{% url 'post-detail' post.id %}" class="btn btn-outline-primary btn-sm fs-7 position-relative z-2">
+                                    Подробнее <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="property-location mb-3">
-                    <i class="fas fa-map-marker-alt text-muted me-1"></i>
-                    <small class="text-muted">{{ post.address|truncatewords:3 }}</small>
-                </div>
-                
-                <!-- Категория -->
-                {% if post.category %}
-                <div class="property-category mb-2">
-                    <span class="badge bg-light text-dark border">
-                        <i class="fas fa-tag me-1"></i>{{ post.category.name }}
-                    </span>
-                </div>
-                {% endif %}
-                
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="owner-info">
-                        <small class="text-muted">
-                            <i class="fas fa-user me-1"></i>{{ post.owner.username }}
-                        </small>
-                    </div>
-                    <a href="{% url 'post-detail' post.id %}" class="btn btn-outline-primary btn-sm">
-                        Подробнее <i class="fas fa-arrow-right ms-1"></i>
-                    </a>
-                </div>
+                {% endfor %}
             </div>
-        </div>
-    </div>
-    {% endfor %}
-</div>
 
             <!-- Пагинация -->
             {% if posts.has_other_pages %}
-            <nav aria-label="Page navigation" class="mt-5">
-                <ul class="pagination justify-content-center">
+            <nav aria-label="Page navigation" class="mt-4 mt-md-5">
+                <ul class="pagination justify-content-center flex-wrap">
                     {% if posts.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.max_price %}max_price={{ request.GET.max_price }}&{% endif %}{% if request.GET.rooms %}rooms={{ request.GET.rooms }}&{% endif %}page={{ posts.previous_page_number }}">
+                        <a class="page-link fs-6 py-2 px-3" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.max_price %}max_price={{ request.GET.max_price }}&{% endif %}{% if request.GET.rooms %}rooms={{ request.GET.rooms }}&{% endif %}page={{ posts.previous_page_number }}">
                             <i class="fas fa-chevron-left"></i>
                         </a>
                     </li>
@@ -315,18 +314,18 @@
                     {% for num in posts.paginator.page_range %}
                         {% if posts.number == num %}
                         <li class="page-item active">
-                            <span class="page-link">{{ num }}</span>
+                            <span class="page-link fs-6 py-2 px-3">{{ num }}</span>
                         </li>
                         {% elif num > posts.number|add:'-3' and num < posts.number|add:'3' %}
                         <li class="page-item">
-                            <a class="page-link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.max_price %}max_price={{ request.GET.max_price }}&{% endif %}{% if request.GET.rooms %}rooms={{ request.GET.rooms }}&{% endif %}page={{ num }}">{{ num }}</a>
+                            <a class="page-link fs-6 py-2 px-3" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.max_price %}max_price={{ request.GET.max_price }}&{% endif %}{% if request.GET.rooms %}rooms={{ request.GET.rooms }}&{% endif %}page={{ num }}">{{ num }}</a>
                         </li>
                         {% endif %}
                     {% endfor %}
 
                     {% if posts.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.max_price %}max_price={{ request.GET.max_price }}&{% endif %}{% if request.GET.rooms %}rooms={{ request.GET.rooms }}&{% endif %}page={{ posts.next_page_number }}">
+                        <a class="page-link fs-6 py-2 px-3" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.max_price %}max_price={{ request.GET.max_price }}&{% endif %}{% if request.GET.rooms %}rooms={{ request.GET.rooms }}&{% endif %}page={{ posts.next_page_number }}">
                             <i class="fas fa-chevron-right"></i>
                         </a>
                     </li>
@@ -339,11 +338,11 @@
             <!-- Пустой результат -->
             <div class="text-center py-5">
                 <div class="empty-state-icon mb-4">
-                    <i class="fas fa-search fa-4x text-muted"></i>
+                    <i class="fas fa-search fa-3x fa-4x text-muted"></i>
                 </div>
-                <h3 class="text-muted mb-3">Объявления не найдены</h3>
-                <p class="text-muted mb-4">Попробуйте изменить параметры поиска или сбросить фильтры</p>
-                <a href="{% url 'post-list' %}" class="btn btn-primary">
+                <h3 class="text-muted mb-3 fs-4">Объявления не найдены</h3>
+                <p class="text-muted mb-4 fs-6">Попробуйте изменить параметры поиска или сбросить фильтры</p>
+                <a href="{% url 'post-list' %}" class="btn btn-primary btn-lg">
                     <i class="fas fa-times me-2"></i>Сбросить фильтры
                 </a>
             </div>
@@ -353,20 +352,75 @@
 </div>
 
 <style>
-    .property-card {
+/* Базовые стили */
+.container-fluid {
+    max-width: 1400px;
+}
+
+/* Статистика */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.75rem;
+    color: white;
+    font-size: 1.25rem;
+}
+
+.stat-info h3 {
+    font-size: 1.4rem;
+    margin-bottom: 0.2rem;
+    color: #2c5aa0;
+    font-weight: 700;
+}
+
+.stat-info p {
+    color: #6c757d;
+    margin-bottom: 0;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+/* Карточки объявлений */
+.property-card {
+    border-radius: 12px;
+    overflow: hidden;
     transition: all 0.3s ease;
     border: 1px solid #e9ecef;
 }
 
 .property-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
-    border-color: #007bff;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12) !important;
 }
 
 .property-image {
     overflow: hidden;
-    border-radius: 8px 8px 0 0;
 }
 
 .property-main-image {
@@ -378,32 +432,33 @@
 }
 
 .placeholder-image {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 8px 8px 0 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
 }
 
 .property-badges .badge {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     backdrop-filter: blur(10px);
+    margin-bottom: 2px;
 }
 
 .price-tag {
     font-weight: 600;
-    font-size: 0.9rem;
     backdrop-filter: blur(10px);
 }
 
 .feature-item {
-    padding: 5px;
+    padding: 0.25rem;
 }
 
 .feature-item .feature-value {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     margin-top: 2px;
+    color: #2c5aa0;
+    font-weight: 600;
 }
 
 .feature-item i {
-    font-size: 1rem;
+    font-size: 0.9rem;
 }
 
 .owner-info {
@@ -417,18 +472,6 @@
     display: block;
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
-    .property-features .feature-value {
-        font-size: 0.7rem;
-    }
-    
-    .price-tag {
-        font-size: 0.8rem;
-        padding: 4px 8px;
-    }
-}
-
 /* Анимация появления карточек */
 .post-card {
     opacity: 0;
@@ -438,7 +481,7 @@
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
@@ -454,106 +497,121 @@
 .post-card:nth-child(5) { animation-delay: 0.5s; }
 .post-card:nth-child(6) { animation-delay: 0.6s; }
 
-.stats-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+/* Адаптивность для мобильных */
+@media (max-width: 576px) {
+    .container-fluid {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+    
+    .stats-container {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .stat-card {
+        padding: 0.75rem;
+    }
+    
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+        margin-right: 0.5rem;
+    }
+    
+    .stat-info h3 {
+        font-size: 1.2rem;
+    }
+    
+    .stat-info p {
+        font-size: 0.75rem;
+    }
+    
+    .property-image {
+        height: 160px !important;
+    }
+    
+    .card-body {
+        padding: 1rem !important;
+    }
+    
+    .feature-item .feature-value {
+        font-size: 0.7rem;
+    }
+    
+    .price-tag {
+        font-size: 0.8rem !important;
+        padding: 6px 12px !important;
+    }
 }
 
-.stat-card {
-    background: white;
-    border-radius: 15px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    display: flex;
-    align-items: center;
-    transition: transform 0.3s ease;
-    border: 1px solid #e9ecef;
+@media (min-width: 577px) and (max-width: 768px) {
+    .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .property-image {
+        height: 170px !important;
+    }
 }
 
-.stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+@media (min-width: 769px) {
+    .stats-container {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+    }
+    
+    .property-image {
+        height: 200px !important;
+    }
 }
 
-.stat-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 1rem;
-    color: white;
-    font-size: 1.5rem;
+/* Улучшения для очень маленьких экранов */
+@media (max-width: 360px) {
+    .property-features .feature-value {
+        font-size: 0.65rem !important;
+    }
+    
+    .btn-sm {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.7rem !important;
+    }
+    
+    .card-title {
+        font-size: 0.9rem !important;
+    }
 }
 
-.stat-info h3 {
-    font-size: 1.8rem;
-    margin-bottom: 0.2rem;
-    color: #2c5aa0;
-}
-
-.stat-info p {
-    color: #6c757d;
-    margin-bottom: 0;
-    font-weight: 500;
-}
-
-.property-card {
-    border-radius: 15px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
-
-.property-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
-}
-
-.property-image {
-    height: 200px;
-    overflow: hidden;
-}
-
-.placeholder-image {
-    height: 100%;
-    width: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.property-badges {
-    z-index: 2;
-}
-
-.price-tag {
-    font-weight: bold;
-    font-size: 1.1rem;
-}
-
-.feature-item {
-    padding: 0.5rem;
-}
-
-.feature-value {
-    font-size: 0.9rem;
-    color: #2c5aa0;
-}
-
-.bg-gradient-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-}
-
-.empty-state-icon {
-    opacity: 0.5;
-}
-
-.pagination .page-link {
+/* Улучшения для форм */
+.form-control, .form-select {
     border-radius: 8px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Пагинация */
+.pagination .page-link {
+    border-radius: 6px;
     margin: 0 2px;
     border: none;
     color: #6c757d;
+    min-width: 40px;
+    text-align: center;
 }
 
 .pagination .page-item.active .page-link {
@@ -561,94 +619,85 @@
     border: none;
 }
 
-.card {
-    border: none;
+/* Улучшения для stretched-link */
+.stretched-link::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    content: "";
 }
 
-.form-control:focus, .form-select:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-}
-
-.btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-}
-
-@media (max-width: 768px) {
-    .stats-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .property-card {
-        margin-bottom: 1rem;
-    }
+.position-relative.z-2 {
+    position: relative;
+    z-index: 2;
 }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const searchForm = document.getElementById('searchForm');
-    const searchInput = document.getElementById('searchInput');
-    const toggleFilters = document.getElementById('toggleFilters');
-    const advancedFilters = document.getElementById('advancedFilters');
-    const filtersText = document.getElementById('filtersText');
-    const postsGrid = document.getElementById('postsGrid');
-    
-    // Переключение расширенных фильтров
-    toggleFilters?.addEventListener('click', function() {
-        if (advancedFilters.style.display === 'none') {
-            advancedFilters.style.display = 'block';
-            filtersText.textContent = 'Скрыть фильтры';
-        } else {
-            advancedFilters.style.display = 'none';
-            filtersText.textContent = 'Расширенные фильтры';
-        }
-    });
-    
-    // Автопоиск при вводе (опционально)
-    let searchTimeout;
-    searchInput?.addEventListener('input', function() {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(function() {
-            // Можно добавить автоматическую отправку формы при вводе
-            // searchForm.submit();
-        }, 1000);
-    });
-    
-    // Подсветка результатов поиска
-    function highlightSearchTerms() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const searchTerm = urlParams.get('q');
-        
-        if (searchTerm && postsGrid) {
-            const posts = postsGrid.querySelectorAll('.post-card');
-            const terms = searchTerm.toLowerCase().split(' ');
-            
-            posts.forEach(post => {
-                const text = post.textContent.toLowerCase();
-                const hasMatch = terms.some(term => text.includes(term));
-                
-                if (hasMatch) {
-                    post.style.opacity = '1';
-                } else {
-                    post.style.opacity = '0.3';
-                }
-            });
+    // Адаптивные настройки для мобильных
+    function initMobileOptimizations() {
+        // Уменьшаем анимации на слабых устройствах
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            document.documentElement.style.setProperty('--animation-duration', '0.3s');
         }
     }
     
-    // Инициализация подсветки
-    highlightSearchTerms();
+    // Переключение расширенных фильтров
+    const toggleFilters = document.getElementById('toggleFilters');
+    const advancedFilters = document.getElementById('advancedFilters');
+    const filtersText = document.getElementById('filtersText');
     
-    // Анимация появления карточек
+    if (toggleFilters && advancedFilters) {
+        toggleFilters.addEventListener('click', function() {
+            if (advancedFilters.style.display === 'none') {
+                advancedFilters.style.display = 'block';
+                filtersText.textContent = 'Скрыть фильтры';
+            } else {
+                advancedFilters.style.display = 'none';
+                filtersText.textContent = 'Расширенные фильтры';
+            }
+        });
+    }
+    
+    // Ленивая загрузка изображений с учетом мобильных
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                // Для мобильных используем более легкую версию если нужно
+                if (img.dataset.src) {
+                    img.src = img.dataset.src;
+                    delete img.dataset.src;
+                }
+                imageObserver.unobserve(img);
+            }
+        });
+    }, {
+        rootMargin: '50px 0px',
+        threshold: 0.1
+    });
+    
+    document.querySelectorAll('.property-main-image').forEach(img => {
+        imageObserver.observe(img);
+    });
+    
+    // Анимация карточек с учетом производительности
     function animateCards() {
         const cards = document.querySelectorAll('.post-card');
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        
+        if (reducedMotion) {
+            cards.forEach(card => {
+                card.style.opacity = '1';
+                card.style.transform = 'none';
+            });
+            return;
+        }
+        
         cards.forEach((card, index) => {
             card.style.opacity = '0';
             card.style.transform = 'translateY(20px)';
@@ -657,56 +706,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 card.style.transition = 'all 0.5s ease';
                 card.style.opacity = '1';
                 card.style.transform = 'translateY(0)';
-            }, index * 100);
+            }, index * 80); // Уменьшенная задержка для мобильных
         });
     }
     
-    // Запуск анимации при загрузке
+    // Touch-оптимизации для мобильных
+    function initTouchOptimizations() {
+        // Улучшаем обработку касаний для карточек
+        const cards = document.querySelectorAll('.property-card');
+        cards.forEach(card => {
+            card.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.98)';
+            }, { passive: true });
+            
+            card.addEventListener('touchend', function() {
+                this.style.transform = '';
+            }, { passive: true });
+        });
+    }
+    
+    // Инициализация
+    initMobileOptimizations();
     animateCards();
+    initTouchOptimizations();
     
-    // Обработка отправки формы
-    searchForm?.addEventListener('submit', function(e) {
-        // Можно добавить прелоадер
-        const submitBtn = this.querySelector('button[type="submit"]');
-        if (submitBtn) {
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Поиск...';
-            submitBtn.disabled = true;
-        }
-    });
-});
-</script>
-<script>
-// Добавляем обработчики для улучшения UX
-document.addEventListener('DOMContentLoaded', function() {
-    // Ленивая загрузка изображений
-    const images = document.querySelectorAll('.property-main-image');
-    
-    const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.src;
-                imageObserver.unobserve(img);
-            }
-        });
-    });
-    
-    images.forEach(img => imageObserver.observe(img));
-    
-    // Добавляем обработчик клика по всей карточке
-    const cards = document.querySelectorAll('.property-card');
-    cards.forEach(card => {
-        card.style.cursor = 'pointer';
-        card.addEventListener('click', function(e) {
-            // Не переходим по ссылке если кликнули на кнопку или ссылку
-            if (e.target.tagName === 'A' || e.target.closest('a') || e.target.tagName === 'BUTTON' || e.target.closest('button')) {
-                return;
-            }
-            const link = this.querySelector('a[href*="post-detail"]');
-            if (link) {
-                window.location.href = link.href;
-            }
-        });
+    // Обработка изменения ориентации экрана
+    window.addEventListener('orientationchange', function() {
+        setTimeout(animateCards, 100);
     });
 });
 </script>

@@ -1,0 +1,141 @@
+<!-- templates/404.html -->
+{% extends "main/layout.html" %}
+
+{% block title %}Страница не найдена (404) - Аренда квартир{% endblock %}
+
+{% block page_title %}Ой! Страница не найдена{% endblock %}
+
+{% block page_subtitle %}Кажется, мы не можем найти то, что вы ищете{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <!-- Анимация/Иллюстрация -->
+            <div class="error-illustration mb-5">
+                <div class="error-icon">
+                    <i class="fas fa-search-location fa-5x text-primary mb-4"></i>
+                </div>
+                <h1 class="display-1 fw-bold text-primary mb-3">404</h1>
+            </div>
+
+            <!-- Сообщение об ошибке -->
+            <div class="error-content mb-5">
+                <h2 class="h3 mb-3">Страница не найдена</h2>
+                <p class="lead text-muted mb-4">
+                    Запрашиваемая страница не существует или была перемещена. 
+                    Возможно, вы ввели неправильный адрес или страница была удалена.
+                </p>
+                
+                <!-- Что можно сделать -->
+                <div class="suggestions mb-5">
+                    <h4 class="h5 mb-3">Что можно сделать?</h4>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="suggestion-item p-3 border rounded">
+                                <i class="fas fa-home fa-2x text-primary mb-3"></i>
+                                <h5>На главную</h5>
+                                <p class="small text-muted">Вернуться на главную страницу сайта</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="suggestion-item p-3 border rounded">
+                                <i class="fas fa-search fa-2x text-primary mb-3"></i>
+                                <h5>Поиск</h5>
+                                <p class="small text-muted">Воспользуйтесь поиском по сайту</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="suggestion-item p-3 border rounded">
+                                <i class="fas fa-envelope fa-2x text-primary mb-3"></i>
+                                <h5>Сообщить</h5>
+                                <p class="small text-muted">Сообщите о проблеме администратору</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кнопки действий -->
+                <div class="error-actions">
+                    <div class="row g-3 justify-content-center">
+                        <div class="col-auto">
+                            <a href="{% url 'post-list' %}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-home me-2"></i>На главную
+                            </a>
+                        </div>
+                        <div class="col-auto">
+                            <a href="{% url 'post-list' %}" class="btn btn-outline-primary btn-lg">
+                                <i class="fas fa-search me-2"></i>Поиск квартир
+                            </a>
+                        </div>
+                        <div class="col-auto">
+                            <button onclick="history.back()" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-arrow-left me-2"></i>Назад
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Дополнительная информация -->
+            <div class="error-help bg-light rounded p-4">
+                <h4 class="h5 mb-3">Нужна помощь?</h4>
+                <p class="text-muted mb-3">
+                    Если вы считаете, что это ошибка, пожалуйста, свяжитесь с нашей службой поддержки.
+                </p>
+                <a href="mailto:support@arenda.ru" class="btn btn-outline-primary">
+                    <i class="fas fa-envelope me-2"></i>Написать в поддержку
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-illustration {
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+.suggestion-item {
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.suggestion-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.error-icon {
+    opacity: 0.8;
+}
+
+.display-1 {
+    font-size: 8rem;
+    font-weight: 900;
+}
+
+@media (max-width: 768px) {
+    .display-1 {
+        font-size: 5rem;
+    }
+    
+    .error-actions .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+</style>
+{% endblock %}

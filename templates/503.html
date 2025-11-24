@@ -1,0 +1,103 @@
+<!-- templates/503.html -->
+{% extends "main/layout.html" %}
+
+{% block title %}Сервис недоступен (503) - Аренда квартир{% endblock %}
+
+{% block page_title %}Сервис временно недоступен{% endblock %}
+
+{% block page_subtitle %}Мы проводим технические работы{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <div class="maintenance-illustration mb-5">
+                <i class="fas fa-tools fa-6x text-primary mb-4"></i>
+                <h1 class="display-1 fw-bold text-primary mb-3">503</h1>
+            </div>
+
+            <div class="maintenance-content">
+                <h2 class="h3 mb-3">Проводятся технические работы</h2>
+                <p class="lead text-muted mb-4">
+                    Сайт временно недоступен из-за плановых технических работ. 
+                    Мы работаем над улучшением сервиса и скоро вернемся.
+                </p>
+
+                <!-- Таймер -->
+                <div class="maintenance-timer mb-5">
+                    <div class="countdown-container bg-light rounded p-4">
+                        <h4 class="h5 mb-3">Ожидаемое время восстановления:</h4>
+                        <div id="maintenanceCountdown" class="display-4 fw-bold text-primary"></div>
+                        <p class="text-muted mt-2">Мы вернемся очень скоро!</p>
+                    </div>
+                </div>
+
+                <!-- Прогресс работ -->
+                <div class="progress-section mb-5">
+                    <h4 class="h5 mb-3">Ход работ:</h4>
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" style="width: 75%">75%</div>
+                    </div>
+                    <p class="text-muted small">Обновление базы данных...</p>
+                </div>
+
+                <!-- Контакты -->
+                <div class="contact-info">
+                    <p class="text-muted">
+                        По срочным вопросам: 
+                        <a href="mailto:support@arenda.ru" class="text-decoration-none">support@arenda.ru</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Таймер обратного отсчета (пример на 1 час)
+let maintenanceTime = 60 * 60; // 1 час в секундах
+
+function updateMaintenanceTimer() {
+    const hours = Math.floor(maintenanceTime / 3600);
+    const minutes = Math.floor((maintenanceTime % 3600) / 60);
+    const seconds = maintenanceTime % 60;
+    
+    document.getElementById('maintenanceCountdown').textContent = 
+        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    if (maintenanceTime > 0) {
+        maintenanceTime--;
+        setTimeout(updateMaintenanceTimer, 1000);
+    } else {
+        location.reload();
+    }
+}
+
+updateMaintenanceTimer();
+</script>
+
+<style>
+.maintenance-illustration {
+    animation: rotate 3s infinite linear;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.progress-bar-animated {
+    animation: progress-animation 1s linear infinite;
+}
+
+@keyframes progress-animation {
+    0% { background-position: 0 0; }
+    100% { background-position: 40px 0; }
+}
+
+.countdown-container {
+    border-left: 5px solid #2c5aa0;
+}
+</style>
+{% endblock %}
