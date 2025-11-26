@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Category, Post, Comment,PostImage, Profile
+from .models import Category, Post, Comment,PostImage, Profile,User
 from django.contrib.admin import DateFieldListFilter
+
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -155,6 +156,15 @@ class PostAdmin(admin.ModelAdmin):
         }),
     )
     inlines = [PostImageInline]
+    actions = ['approve_posts', 'reject_posts']
+    
+    def approve_posts(self, request, queryset):
+        queryset.update(status='active')
+    approve_posts.short_description = "✅ Одобрить выбранные объявления"
+    
+    def reject_posts(self, request, queryset):
+        queryset.update(status='rejected') 
+    reject_posts.short_description = "❌ Отклонить выбранные объявления"
     
     def comments_count(self, obj):
         return obj.comments.count()
@@ -264,6 +274,7 @@ class ProfileAdmin(admin.ModelAdmin):
         return "Аватар не установлен"
     avatar_display.short_description = 'Предпросмотр аватара'
 
+
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('post', 'owner', 'created', 'active')
@@ -280,3 +291,4 @@ class CommentAdmin(admin.ModelAdmin):
     def deactivate_comments(self, request, queryset):
         queryset.update(active=False)
     deactivate_comments.short_description = "Деактивировать комментарии"
+

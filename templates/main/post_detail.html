@@ -235,7 +235,7 @@
                     </h6>
                 </div>
                 <div class="card-body">
-                    {% if user == post.owner or user.is_staff %}
+                    {% if user == post.owner %}
                     <div class="d-grid gap-2">
                         <a href="{% url 'post-update' post.id %}" class="btn btn-warning">
                             <i class="fas fa-edit me-2"></i>Редактировать
@@ -244,11 +244,6 @@
                            onclick="return confirm('Вы уверены, что хотите удалить это объявление?')">
                             <i class="fas fa-trash me-2"></i>Удалить
                         </a>
-                        {% if user.is_staff %}
-                        <a href="{% url 'admin:apartament_post_change' post.id %}" class="btn btn-outline-secondary">
-                            <i class="fas fa-cog me-2"></i>Админ-панель
-                        </a>
-                        {% endif %}
                     </div>
                     {% else %}
                     <div class="d-grid gap-2">
@@ -261,6 +256,11 @@
                         <button class="btn btn-outline-info" onclick="alert('Функция жалобы скоро будет доступна!')">
                             <i class="fas fa-flag me-2"></i>Пожаловаться
                         </button>
+                        {% if user.is_staff %}
+                        <a href="{% url 'admin:apartament_post_change' post.id %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-cog me-2"></i>Админ-панель
+                        </a>
+                        {% endif %}
                     </div>
                     {% endif %}
                 </div>

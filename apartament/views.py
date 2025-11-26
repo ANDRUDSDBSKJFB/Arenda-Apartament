@@ -26,6 +26,12 @@ from django.views.generic.edit import FormMixin
 from .permissions import IsOwnerOrReadOnly
 from .models import Profile
 from .forms import UserUpdateForm, ProfileUpdateForm, AdminPostForm, PostImage, PostImageForm,PostImageUploadForm
+from django.views.static import serve
+from django.conf import settings
+from django.urls import re_path
+
+def serve_media_files(request, path):
+    return serve(request, path, document_root=settings.MEDIA_ROOT)
 
 
 class ProfileDetailView(LoginRequiredMixin, DetailView):
@@ -267,7 +273,7 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
         context['categories'] = Category.objects.all()
         
         # Исправлено: используем post вместо Post
-        context['existing_images'] = PostImage.objects.filter(Post=self.object)
+        context['existing_images'] = PostImage.objects.filter(post=self.object)
         context['image_form'] = PostImageUploadForm()
         return context
 
@@ -287,8 +293,8 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
         # Обработка основного изображения
         main_image_id = self.request.POST.get('main_image')
         if main_image_id:
-            PostImage.objects.filter(Post=self.object).update(is_main=False)  # Исправлено
-            PostImage.objects.filter(id=main_image_id, Post=self.object).update(is_main=True)  # Исправлено
+            PostImage.objects.filter(post=self.object).update(is_main=False)  # Исправлено
+            PostImage.objects.filter(id=main_image_id, post=self.object).update(is_main=True)  # Исправлено
         
         messages.success(self.request, 'Объявление успешно обновлено!')
         return response

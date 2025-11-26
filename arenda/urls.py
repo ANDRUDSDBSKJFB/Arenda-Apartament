@@ -4,6 +4,8 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from apartament import views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.urls import re_path
+from django.views.static import serve  # Добавьте этот импорт
 
 urlpatterns = [
     path('', views.PostinList.as_view(), name='post-list'),
@@ -11,7 +13,7 @@ urlpatterns = [
     path('reg', views.ProjectUserRegistrationView.as_view(), name='registration'),
     path('logout', views.ProjectUserLogOutView.as_view(), name='logout'),
     path('edit', views.PostChangeView.as_view(), name='change'),
-    path('create/',views.PostCreateView.as_view(),name='post-create'),
+    path('create/', views.PostCreateView.as_view(), name='post-create'),
     path('<int:pk>/', views.PostinDetailView.as_view(), name='post-detail'),
     path('<int:pk>/comment', views.CommentDeleteView.as_view(), name='comment-delete'),
     path('<int:pk>/update', views.PostUpdateView.as_view(), name='post-update'),
@@ -31,5 +33,15 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 ]
 
+# ВСЕГДА обслуживаем медиафайлы, независимо от DEBUG
+urlpatterns += [
+    re_path(r'^media/(?P<path>.*)$', serve, {
+        'document_root': settings.MEDIA_ROOT,
+    }),
+]
+
+# Только в разработке - статические файлы через Django
 if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    # Дополнительно можно добавить медиа через static для разработки
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

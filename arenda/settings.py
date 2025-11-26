@@ -15,7 +15,6 @@ import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -31,7 +30,7 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 SECRET_KEY = 'django-insecure-6m8q619+8=t6_e^whsea=m*92@sg_$)zj)x5^j4erx09r=gj(e'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 ALLOWED_HOSTS = ['localhost',
@@ -39,14 +38,14 @@ ALLOWED_HOSTS = ['localhost',
     '0.0.0.0',
     '192.168.1.100', 
     '100.91.18.253', 
-    '192.168.1.*',
-    '*',    
+    '192.168.1.*',   
     '.local',  ]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -57,8 +56,123 @@ INSTALLED_APPS = [
     'apartament'
 ]
 
+# settings.py
+JAZZMIN_SETTINGS = {
+    # Тема
+    "theme": "default",  # Попробуйте другие темы
+    
+    # Заголовки
+    "site_title": "🏠 Arenda Admin",
+    "site_header": "🏠 Arenda Administration", 
+    "site_brand": "Arenda",
+    "site_logo": None,
+    
+    # Welcome текст
+    "welcome_sign": "Добро пожаловать в Arenda Admin!",
+    
+    # Copyright
+    "copyright": "Arenda Ltd",
+    
+    # Поиск
+    "search_model": ["auth.User", "apartament.Post"],
+    
+    # Навигация
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    
+    # Скрыть приложения
+    "hide_apps": [],
+    
+    # Скрыть модели
+    "hide_models": [],
+    
+    # Иконки
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "apartament.Category": "fas fa-tag",
+        "apartament.Post": "fas fa-home",
+        "apartament.Comment": "fas fa-comment",
+        "apartament.Profile": "fas fa-id-card",
+        "apartament.PostImage": "fas fa-image",
+    },
+    
+    # Иконки по умолчанию
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+    
+    # Показывать UI builder
+    "show_ui_builder": True,
+    
+    # Сменить ссылку "view site"
+    "site_url": "/",
+    
+    # Топ меню
+    "topmenu_links": [
+        {"name": "Главная", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Сайт", "url": "/", "new_window": True},
+        {"model": "auth.User"},
+        {"app": "apartament"},
+    ],
+    
+    # Порядок приложений
+    "order_with_respect_to": [
+        "apartament",
+        "apartament.Post", 
+        "apartament.Category",
+        "apartament.Comment", 
+        "apartament.Profile",
+        "apartament.PostImage",
+        "auth",
+    ],
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "default",
+    "dark_mode_theme": "darkly",
+    
+    # Настройки navbar
+    "navbar": "navbar-white navbar-light",
+    "navbar_fixed": True,
+    
+    # Настройки sidebar  
+    "sidebar": "sidebar-dark-primary",
+    "sidebar_fixed": True,
+    "sidebar_nav_small_text": True,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": True,
+    "sidebar_nav_compact_style": True,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": True,
+    
+    # Настройки footer
+    "footer_fixed": False,
+    
+    # Настройки body
+    "body_small_text": False,
+    "brand_small_text": False,
+    
+    # Акцентные цвета
+    "accent": "accent-primary",
+    
+    # Кнопки
+    "button_classes": {
+        "primary": "btn-outline-primary",
+        "secondary": "btn-outline-secondary",
+        "info": "btn-outline-info",
+        "warning": "btn-outline-warning",
+        "danger": "btn-outline-danger",
+        "success": "btn-outline-success"
+    },
+    
+    # Actions
+    "actions_sticky_top": True
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -116,6 +230,28 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': '/tmp/django_errors.log',
+        },
+        'console': {
+            'level': 'ERROR',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'console'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -132,7 +268,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = 'staticfiles/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
